@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author Viral
  */
-public class dataTypes_assignment {
+public class DataType_assignment {
     
     public String assignment_id;
     public String assignment_name;

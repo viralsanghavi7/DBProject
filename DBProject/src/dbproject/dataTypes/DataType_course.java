@@ -9,7 +9,7 @@ import java.util.Date;
  *
  * @author Viral
  */
-public class dataTypes_course {
+public class DataType_course {
     
     public String course_id;
     public String  course_name;
