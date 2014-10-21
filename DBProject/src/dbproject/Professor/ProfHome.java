@@ -20,6 +20,12 @@ public class ProfHome extends javax.swing.JFrame {
      */
     public ProfHome() {
         initComponents();
+        
+        /* for TA view don't display these buttons
+        jButton2.setVisible(false);
+        jButton1.setVisible(false);
+         */
+         
     }
 
     /**

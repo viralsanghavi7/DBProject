@@ -22,6 +22,12 @@ public class Prof_CourseActions extends javax.swing.JFrame {
      */
     public Prof_CourseActions() {
         initComponents();
+        /* for TAs don't display these buttons
+        jButton4.setVisible(false);
+        jButton5.setVisible(false);
+        jButton6.setVisible(false);
+        jButton8.setVisible(false);
+        */
     }
     
     

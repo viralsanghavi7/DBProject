@@ -18,6 +18,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
      */
     public Prof_View_HW() {
         initComponents();
+        
     }
     
     
