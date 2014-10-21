@@ -5,6 +5,8 @@
  */
 package dbproject;
 
+import dbproject.Professor.ProfHome;
+import dbproject.Student.Student_Home;
 /**
  *
  * @author Chetan
@@ -82,10 +84,10 @@ public class WelcomeScreen extends javax.swing.JFrame {
                                     .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                                     .addComponent(jPasswordField1)))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(85, 85, 85)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(130, 130, 130)
                         .addComponent(jLabel4)))
@@ -108,9 +110,9 @@ public class WelcomeScreen extends javax.swing.JFrame {
                     .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(83, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         pack();
@@ -133,15 +135,32 @@ public class WelcomeScreen extends javax.swing.JFrame {
         String loginId = jTextField1.getText().toString();
         String pwd  = jPasswordField1.getPassword().toString();
         boolean bValidUser = true;
+        String typeOfUser = "S";  //P = Professor, T = TA and S = Student
         
         // ToDo: Check from the database if the login credential are correct or not.
         
         if(bValidUser)
         {
             //create home page object according to the type of user.
-            ProfHome obj = new ProfHome();
-            obj.setVisible(true);
-            this.dispose();
+            if (typeOfUser.equals("P"))
+            {                
+                ProfHome obj = new ProfHome();
+                obj.setVisible(true);
+                this.dispose();
+            }
+            else if (typeOfUser.equals("S"))
+            {
+                Student_Home obj = new Student_Home();
+                obj.setVisible(true);
+                this.dispose();
+            }
+            else if (typeOfUser.equals("T"))
+            {
+                Student_Home obj = new Student_Home();
+                obj.setVisible(true);
+                this.dispose();
+            }
+            
         }
         else
         {

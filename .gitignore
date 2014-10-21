@@ -1,0 +1,25 @@
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Logs and databases #
+######################
+*.log
+
+# Backup Files #
+###############
+*~
+
+# ignore all files in the build/ and src/ directory
+DBProject/build/
+DBProject/src/
