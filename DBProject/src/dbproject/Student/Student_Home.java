@@ -10,19 +10,27 @@ import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
 import java.io.*;
 import dbproject.dataType.*;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  *
  * @author Chetan
  */
 public class Student_Home extends javax.swing.JFrame {
-
+    //Attributes
+    private Statement stmt = null;
+    private ResultSet rs = null;
     DataType_user userObj;
     /**
      * Creates new form MainScreen
      */
     public Student_Home() {
         initComponents();
+        dbconnection_dbObject db = new dbconnection_dbObject();
+        stmt = db.getDBConnection();
+        
         jLabel1.setVisible(false);
         jComboBox1.setVisible(false);
         jButton3.setVisible(false);
@@ -39,6 +47,8 @@ public class Student_Home extends javax.swing.JFrame {
     //Overloaded constructor
     public Student_Home(DataType_user inputObj) {
         initComponents();
+        dbconnection_dbObject db = new dbconnection_dbObject();
+        stmt = db.getDBConnection();
         
         userObj = inputObj;
         
@@ -128,6 +138,11 @@ public class Student_Home extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Select a course from dropdown of enrolled courses");
 
@@ -226,6 +241,7 @@ public class Student_Home extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         jLabel1.setVisible(true);
         jComboBox1.setVisible(true);
+        this.setComboBoxCourseFromDB();
         jButton3.setVisible(true);
         
         jLabel2.setVisible(false);
@@ -241,6 +257,7 @@ public class Student_Home extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         jLabel1.setVisible(false);
         jComboBox1.setVisible(false);
+        this.setComboBoxCourseFromDB();
         jButton3.setVisible(false);
         
         jLabel2.setVisible(true);
@@ -250,6 +267,35 @@ public class Student_Home extends javax.swing.JFrame {
         jLabel3.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    //Set up comboBox for Course from DB's data
+    private void setComboBoxCourseFromDB(){
+        //Empty the ComboBox
+        jComboBox1.removeAllItems();
+        
+        //Query to get all the courses of the student
+        String query = "SELECT e.course_id "
+                        +"FROM enrollment e, course c "
+                        +"WHERE e.student_id = '" + userObj.user_id + "' AND e.course_id = c.course_id";
+        
+        System.out.println("query to get student courses : "+ query);
+        
+        try {
+            rs = stmt.executeQuery(query);
+        
+            if (!rs.next()) {//the user has courses
+                while (rs.next()) {//treatement of each tuple
+		    String courseName = rs.getString("e.course_id");
+		    System.out.println(courseName);
+                    jComboBox1.addItem(courseName);//add the course in the ComboBox
+		}
+            }
+
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - Student_Home - setComboBoxCourseFromDB - get all courses of the user : "+ oops); 
+        }
+        
+    }
     /*
     'Continue' button click
     */
@@ -285,17 +331,24 @@ public class Student_Home extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         //Step1: 
         
+        //Warning message
         jLabel3.setVisible(true);
         jLabel3.setText("Course Added Successfully");
         
+        //Bloc for Select Course
         jLabel1.setVisible(true);
-        jComboBox1.setVisible(true);
         jButton3.setVisible(true);
+        jComboBox1.setVisible(true);
         
+        //Bloc for token
         jLabel2.setVisible(false);
         jTextField1.setVisible(false);
         jButton5.setVisible(false);
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
