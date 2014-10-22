@@ -10,18 +10,23 @@ package dbproject.dbconnection;
 import java.sql.*;
 
 public class dbconnection_dbObject {
-    public Connection conn = null;
-    public Statement stmt = null;
-    public ResultSet rs = null;
+
     static final String jdbcURL
             = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 
     private static dbconnection_dbObject instance = null;
     
     
-    private dbconnection_dbObject() {
+    public dbconnection_dbObject() {
+    }
 
-       
+    public static Statement getDBConnection() {
+        
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+        if (instance == null) {
+            instance = new dbconnection_dbObject();
             try {
 
             // Load the driver. This creates an instance of the driver
@@ -40,22 +45,17 @@ public class dbconnection_dbObject {
 		// Create a statement object that will be sending your
                     // SQL statements to the DBMS
                     stmt = conn.createStatement();
-                   
+
                 } finally {
                    
                 }
             } catch (ClassNotFoundException | SQLException oops) {
                 System.out.println(oops);
             }
-        } 
+        } else {
             
-
-    public static dbconnection_dbObject getDBConnection() {   
-            if(instance == null)
-        {
-            instance = new dbconnection_dbObject();
         }
-        return instance;
+            return stmt;
     }
 
     static void close(Connection conn) {

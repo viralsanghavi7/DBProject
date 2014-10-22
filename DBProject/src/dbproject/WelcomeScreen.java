@@ -27,11 +27,8 @@ public class WelcomeScreen extends javax.swing.JFrame {
         
         initComponents();
         jLabel4.setVisible(false);
-        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
-        stmt = db.stmt;
-       System.out.println(stmt);
-        
-        
+        dbconnection_dbObject db = new dbconnection_dbObject();
+        stmt = db.getDBConnection();
        
     }
 
@@ -152,7 +149,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
         
        String query = "SELECT USER_ID,USER_NAME,USER_TYPE FROM DBUSER WHERE USER_ID = '"+ loginId + 
              "' AND USER_PASSWORD = '" + pwd +"'";
-        
+        System.out.println(query);
         try {
         rs = stmt.executeQuery(query);
         
@@ -169,14 +166,10 @@ public class WelcomeScreen extends javax.swing.JFrame {
              user_object.user_name = user_name;
              user_object.user_type = user_type;
              
-             
-             
              System.out.println(user_type);
             switch (user_type) {
                 case "p":
-                case "t":
                     {
-                        
                         ProfHome obj = new ProfHome(user_object);
                         obj.setVisible(true);
                         this.dispose();
@@ -190,7 +183,13 @@ public class WelcomeScreen extends javax.swing.JFrame {
                         this.dispose();
                         break;
                     }
-               
+                case "t":
+                    {
+                        Student_Home obj = new Student_Home();
+                        obj.setVisible(true);
+                        this.dispose();
+                        break;
+                    }
             }
             
              

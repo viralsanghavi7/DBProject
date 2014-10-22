@@ -23,34 +23,36 @@ public class Student_Home extends javax.swing.JFrame {
      */
     public Student_Home() {
         initComponents();
-        student_display_form();
-        
-    }
-    
-    //Overloaded constructor
-    public Student_Home(DataType_user inputObj) {
-        initComponents();
-        student_display_form();
-  
-    }
-    
-    
- 
-    
-     public void student_display_form(){
-        
-        
         jLabel1.setVisible(false);
         jComboBox1.setVisible(false);
         jButton3.setVisible(false);
-        jButton1.setVisible(false);
         
         jLabel2.setVisible(false);
         jTextField1.setVisible(false);
         jButton5.setVisible(false);
         
         //Enrollment message
-        jLabel3.setVisible(false);        }
+        jLabel3.setVisible(false);
+        
+    }
+    
+    //Overloaded constructor
+    public Student_Home(DataType_user inputObj) {
+        initComponents();
+        
+        userObj = inputObj;
+        
+        jLabel1.setVisible(false);
+        jComboBox1.setVisible(false);
+        jButton3.setVisible(false);
+        
+        jLabel2.setVisible(false);
+        jTextField1.setVisible(false);
+        jButton5.setVisible(false);
+        
+        //Enrollment message
+        jLabel3.setVisible(false);        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -166,15 +168,15 @@ public class Student_Home extends javax.swing.JFrame {
                         .addGap(144, 144, 144)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(143, 143, 143)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(60, 60, 60)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(78, 78, 78)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(52, Short.MAX_VALUE))
+                        .addComponent(jLabel1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -273,7 +275,7 @@ public class Student_Home extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+    //    obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
