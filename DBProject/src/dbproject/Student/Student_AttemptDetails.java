@@ -13,6 +13,7 @@ import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -20,12 +21,21 @@ import javax.swing.JButton;
  */
 public class Student_AttemptDetails extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
     /**
      * Creates new form MainScreen
      */
     public Student_AttemptDetails() {
         initComponents();
         AddHomeworkAsRadioButtons();
+    }
+    
+    //Overloaded constrctor
+    public Student_AttemptDetails(DataType_courseAction inputObj) {
+        initComponents();
+        courseActionObj = inputObj;
+        AddHomeworkAsRadioButtons();        
+        jLabel1.setText(courseActionObj.courseObj.course_name);
     }
     
     private void AddHomeworkAsRadioButtons()

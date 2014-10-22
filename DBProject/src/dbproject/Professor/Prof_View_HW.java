@@ -6,6 +6,8 @@
 package dbproject.Professor;
 
 import dbproject.WelcomeScreen;
+import dbproject.dataTypes.*;
+import java.util.*;
 
 /**
  *
@@ -13,17 +15,43 @@ import dbproject.WelcomeScreen;
  */
 public class Prof_View_HW extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
+    Hashtable currentHWKeys;
+    Hashtable pastDueHWKeys;
+    
+    
     /**
      * Creates new form MainScreen
      */
     public Prof_View_HW() {
         initComponents();
-        
     }
     
+    //Overloaded constructor
+    public Prof_View_HW(DataType_courseAction inputObj) {
+        initComponents();
+        courseActionObj = inputObj;
+        
+        populateHomeworksComboboxes();
+    }
     
-    public void setCourseName(String cName){
-        this.jLabel1.setText(cName);
+    /*
+    This method will populate the combo boxes on the screen.
+    */
+    private void populateHomeworksComboboxes()
+    {
+        currentHWKeys = new Hashtable();
+        pastDueHWKeys = new Hashtable();
+        
+        //Step1: Connect to database to get the list of past due homeworks and current homeworks
+        
+        //Step2: Create combo box item and bind it's corresponding id in the hashtable.
+        
+        
+        //for each entry we got from database for homeworks, create comboboxItem and add it in currentHWkeys or
+        //futureHWKeys hashtable
+        
+        //step3: Add combo box item to respective combo box item. 
     }
 
     /**
@@ -138,6 +166,11 @@ public class Prof_View_HW extends javax.swing.JFrame {
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton2.setText("Search");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -153,6 +186,11 @@ public class Prof_View_HW extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jButton4.setText("Search");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Start Date:");
 
@@ -331,7 +369,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
     Back
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions();
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -340,11 +378,35 @@ public class Prof_View_HW extends javax.swing.JFrame {
     Home Button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        ProfHome obj = new ProfHome();
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    //Search button for current hoemwork combobox
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        String selectedSubject = jComboBox1.getSelectedItem().toString();
+        
+        //Get the corresponding AssignmentId from currentHWKeys hashtable
+        String AssignmentId = currentHWKeys.get(selectedSubject).toString();
+        PopulateValuesOnUI(AssignmentId);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    //Search button for past due hoemwork combobox
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String selectedSubject = jComboBox1.getSelectedItem().toString();
+        
+        //Get the corresponding AssignmentId from pastDueHWKeys hashtable
+        String AssignmentId = pastDueHWKeys.get(selectedSubject).toString();
+        PopulateValuesOnUI(AssignmentId);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    /*
+    This method is responsible for displaying the deailed data for perticular assignment on UI.
+    */
+    private void PopulateValuesOnUI(String AssignmentId){
+        
+    }
     /**
      * @param args the command line arguments
      */

@@ -7,6 +7,7 @@ package dbproject;
 
 import dbproject.Professor.ProfHome;
 import dbproject.Student.Student_Home;
+import dbproject.dataTypes.*;
 /**
  *
  * @author Chetan
@@ -135,38 +136,50 @@ public class WelcomeScreen extends javax.swing.JFrame {
         String loginId = jTextField1.getText().toString();
         String pwd  = jPasswordField1.getPassword().toString();
         boolean bValidUser = true;
-        String typeOfUser = "S";  //P = Professor, T = TA and S = Student
         
-        // ToDo: Check from the database if the login credential are correct or not.
+        DataType_user userObj = new DataType_user();
         
+        /*
+        1. Query the database by user id and password.
+        2. If entry not found then bValidUser = false and display the message on UI, 'Invalid creds'
+        2. If entry found, Fetch user id, name, registration date and type of user. Populate userObj.
+        3. Create Prof_home or student_home based on type of user.
+        4. Send this user object to prof_home or student_home in constructor.
+        */
+        
+        // ToDo: Check from the database if the login credential are correct or not and populate user data in userObj.
+        
+        //Temporary
+        userObj.user_name = "Kemafor Ogan";
+        userObj.user_type = "S";  //P = Professor, T = TA and S = Student
+                
         if(bValidUser)
         {
             //create home page object according to the type of user.
-            if (typeOfUser.equals("P"))
+            if (userObj.user_type.equals("P"))
             {                
-                ProfHome obj = new ProfHome();
+                ProfHome obj = new ProfHome(userObj);
                 obj.setVisible(true);
                 this.dispose();
             }
-            else if (typeOfUser.equals("S"))
+            else if (userObj.user_type.equals("S"))
             {
-                Student_Home obj = new Student_Home();
+                Student_Home obj = new Student_Home(userObj);
                 obj.setVisible(true);
                 this.dispose();
             }
-            else if (typeOfUser.equals("T"))
+            else if (userObj.user_type.equals("T"))
             {
-                Student_Home obj = new Student_Home();
+                ProfHome obj = new ProfHome(userObj);
                 obj.setVisible(true);
                 this.dispose();
             }
-            
         }
         else
         {
             jTextField1.setText(null);
             jPasswordField1.setText(null);
-            jLabel4.setVisible(false);
+            jLabel4.setVisible(true);
         }        
     }//GEN-LAST:event_jButton1ActionPerformed
 

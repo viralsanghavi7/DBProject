@@ -6,6 +6,7 @@
 package dbproject.Professor;
 
 import dbproject.WelcomeScreen;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -13,6 +14,7 @@ import dbproject.WelcomeScreen;
  */
 public class Prof_Report extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
     /**
      * Creates new form MainScreen
      */
@@ -20,11 +22,24 @@ public class Prof_Report extends javax.swing.JFrame {
         initComponents();
     }
     
-    
-    public void setCourseName(String cName){
-        this.jLabel1.setText(cName);
+    //Overloaded constructor
+    public Prof_Report(DataType_courseAction inputObj) {
+        initComponents();
+        courseActionObj = inputObj;
+        
+        PopulateComboBoxData();
     }
-
+    
+    //Method to populate all the comboboxes in all the tabs available on the UI.
+    private void PopulateComboBoxData(){
+        
+        //Step1: Populate jComboBox1 in Homework related stats tab
+        
+        //Step2: Populate jComboBox2 and jComboBox2 in Student related stats tab
+        
+        //Step3: Populate the table in Max score student tab
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -142,6 +157,11 @@ public class Prof_Report extends javax.swing.JFrame {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton2.setText("View");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Maximum score:");
 
@@ -247,6 +267,11 @@ public class Prof_Report extends javax.swing.JFrame {
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton3.setText("View");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -406,7 +431,7 @@ public class Prof_Report extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions();
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -415,10 +440,28 @@ public class Prof_Report extends javax.swing.JFrame {
     Home button
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ProfHome obj = new ProfHome();
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    //View button in Homework related stats tab clicked
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        //Step1: Get the selected homework from the dropdown jComboBox1
+        
+        //Step2: Get the corresponding data from database for that homework
+        
+        //Step3: Populate the data on the UI.
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    //View button in Student related stats tab clicked
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        //Step1: Get the selected student from the dropdown jComboBox2
+        
+        //Step2: Get the selected homework from the dropdown jComboBox3
+        
+        //Step3: Get all the details for combination of student and homework we got from above 2 steps
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

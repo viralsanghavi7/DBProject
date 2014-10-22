@@ -10,6 +10,7 @@ import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -17,24 +18,33 @@ import dbproject.WelcomeScreen;
  */
 public class Prof_CourseActions extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
     /**
      * Creates new form MainScreen
      */
     public Prof_CourseActions() {
         initComponents();
-        /* for TAs don't display these buttons
-        jButton4.setVisible(false);
-        jButton5.setVisible(false);
-        jButton6.setVisible(false);
-        jButton8.setVisible(false);
-        */
+        
+    }
+    
+    //Overloaded constructor
+    public Prof_CourseActions(DataType_courseAction inputObj) {
+        initComponents();
+        
+        courseActionObj = inputObj;
+        jLabel1.setText(courseActionObj.courseObj.course_name);
+        
+        // for TAs don't display these buttons        
+        if (courseActionObj.userObj.user_type.equals("T"))
+        {
+            jButton4.setVisible(false);
+            jButton5.setVisible(false);
+            jButton6.setVisible(false);
+            jButton8.setVisible(false);
+        }
     }
     
     
-    public void setCourseName(String cName){
-        this.jLabel1.setText(cName);
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -58,6 +68,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Course Actions");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -222,7 +233,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Button click of Add Homework
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        Prof_AddHW obj = new Prof_AddHW();
+        Prof_AddHW obj = new Prof_AddHW(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -231,7 +242,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of Add remove questions button
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        Prof_Add_Remove_Question obj = new Prof_Add_Remove_Question();
+        Prof_Add_Remove_Question obj = new Prof_Add_Remove_Question(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -240,7 +251,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of Edit Homework button
     */
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        Prof_Edit_HW obj = new Prof_Edit_HW();
+        Prof_Edit_HW obj = new Prof_Edit_HW(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -249,7 +260,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of View Homework button
     */
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        Prof_View_HW obj = new Prof_View_HW();
+        Prof_View_HW obj = new Prof_View_HW(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton7ActionPerformed
@@ -258,7 +269,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of View Notifications button
     */
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        Prof_Notification obj = new Prof_Notification();
+        Prof_Notification obj = new Prof_Notification(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
@@ -267,7 +278,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of View Notifications button
     */
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        Prof_Report obj = new Prof_Report();
+        Prof_Report obj = new Prof_Report(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton9ActionPerformed
@@ -285,7 +296,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ProfHome obj = new ProfHome();
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -294,7 +305,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Home button clicked
     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        ProfHome obj = new ProfHome();
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed

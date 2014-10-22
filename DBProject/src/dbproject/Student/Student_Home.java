@@ -8,6 +8,7 @@ import dbproject.Professor.*;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
 import java.io.*;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -15,6 +16,7 @@ import java.io.*;
  */
 public class Student_Home extends javax.swing.JFrame {
 
+    DataType_user userObj;
     /**
      * Creates new form MainScreen
      */
@@ -31,6 +33,24 @@ public class Student_Home extends javax.swing.JFrame {
         //Enrollment message
         jLabel3.setVisible(false);
         
+    }
+    
+    //Overloaded constructor
+    public Student_Home(DataType_user inputObj) {
+        initComponents();
+        
+        userObj = inputObj;
+        
+        jLabel1.setVisible(false);
+        jComboBox1.setVisible(false);
+        jButton3.setVisible(false);
+        
+        jLabel2.setVisible(false);
+        jTextField1.setVisible(false);
+        jButton5.setVisible(false);
+        
+        //Enrollment message
+        jLabel3.setVisible(false);        
     }
 
     /**
@@ -233,10 +253,17 @@ public class Student_Home extends javax.swing.JFrame {
     'Continue' button click
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        
+        DataType_course courseObj = new DataType_course();
+        //Get the information about the course and populate courseObj
+        
+        DataType_courseAction courseActionObj = new DataType_courseAction();
+            courseActionObj.courseObj = courseObj;
+            courseActionObj.userObj = userObj;
+        
         String subjectName = jComboBox1.getSelectedItem().toString();
         
-        Student_CourseActions obj = new Student_CourseActions();
-        obj.setCourseName(subjectName);
+        Student_CourseActions obj = new Student_CourseActions(courseActionObj);
         obj.setVisible(true);
         
         this.dispose();
@@ -255,6 +282,8 @@ public class Student_Home extends javax.swing.JFrame {
     This button will check for token and will sign up the student for perticular course if all conditions are met.
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        //Step1: 
+        
         jLabel3.setVisible(true);
         jLabel3.setText("Course Added Successfully");
         

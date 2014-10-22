@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package dbproject.Professor;
+
+import dbproject.dataTypes.*;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
 import dbproject.WelcomeScreen;
@@ -15,17 +17,31 @@ import java.io.*;
  */
 public class ProfHome extends javax.swing.JFrame {
 
+    DataType_user userObj;
+    boolean bAddCourseClicked;
+    
     /**
      * Creates new form MainScreen
      */
     public ProfHome() {
         initComponents();
+        bAddCourseClicked = false;
+    }
+    
+    //Overloaded constructor
+    public ProfHome(DataType_user inputObj) {
+        initComponents();
+        bAddCourseClicked = false;
         
-        /* for TA view don't display these buttons
-        jButton2.setVisible(false);
-        jButton1.setVisible(false);
-         */
-         
+        userObj = inputObj;
+        jLabel2.setText("Welcome " + userObj.user_name);
+        
+        // for TA view don't display these buttons
+        if (userObj.user_type.equals("T"))
+        {
+            jButton2.setVisible(false);
+            jButton1.setVisible(false);
+        }
     }
 
     /**
@@ -45,8 +61,10 @@ public class ProfHome extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Home");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -99,7 +117,7 @@ public class ProfHome extends javax.swing.JFrame {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel1.setText("Select a course from dropdown");
+        jLabel1.setText("Select a course from dropdown:");
 
         jButton3.setText("Continue");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -108,10 +126,16 @@ public class ProfHome extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Welcome");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 27, Short.MAX_VALUE)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -119,17 +143,18 @@ public class ProfHome extends javax.swing.JFrame {
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(120, 120, 120)
-                        .addComponent(jLabel1)))
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 27, Short.MAX_VALUE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(62, 62, 62)
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addGap(37, 37, 37)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -160,18 +185,24 @@ public class ProfHome extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
     /*
     Code executed when 'Select Course ' Button is clicked
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       
+       jLabel1.setText("Select a course from dropdown:");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /*
     Code executed when 'Add Course ' Button is clicked
     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        jLabel1.setText("Select a course from dropdown to add:");
+        bAddCourseClicked = true;
         
+        jComboBox1.removeAllItems();
+        //Fetch a list of new courses which are not present in the professor-course relationship
+        //and populate the dropdown with such courses.
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /*
@@ -180,11 +211,34 @@ public class ProfHome extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String subjectName = jComboBox1.getSelectedItem().toString();
         
-        Prof_CourseActions obj = new Prof_CourseActions();
-        obj.setCourseName(subjectName);
-        obj.setVisible(true);
+        if (bAddCourseClicked)
+        {
+            //Insert the relationship between course and professor
+            //fetch the courses to populate the dropdown again.
+            
+            //Allow the user to see the added course in the dropdown along with previous courses.
+            jLabel1.setText("Select a course from dropdown:");
+        }
         
-        this.dispose();
+        else
+        {
+            DataType_course courseObj = new DataType_course();
+            
+            //Get the information about the course and populate courseObj
+            
+            //temp
+            courseObj.course_name = "Database Management System";
+            
+            //populate the courseAction object that need to be passed further.
+            DataType_courseAction courseActionObj = new DataType_courseAction();
+            courseActionObj.courseObj = courseObj;
+            courseActionObj.userObj = userObj;
+            
+            Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+            obj.setVisible(true);
+        
+            this.dispose();
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /*
@@ -240,6 +294,7 @@ public class ProfHome extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables

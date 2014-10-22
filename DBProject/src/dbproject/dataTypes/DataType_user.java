@@ -5,6 +5,8 @@
  */
 package dbproject.dataTypes;
 
+import java.util.Date;
+
 /**
  *
  * @author Viral
@@ -16,4 +18,13 @@ public class DataType_user {
     public String user_password;
     public String user_type;
     
+    //For TA
+    public String course_id;
+    public Date valid_till;
+    
+    //For Professor
+    public String designation;
+    
+    //For Student
+    public String student_type;
 }

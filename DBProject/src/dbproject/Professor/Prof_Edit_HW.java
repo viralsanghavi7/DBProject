@@ -5,14 +5,18 @@
  */
 package dbproject.Professor;
 
+import java.util.*;
 import dbproject.WelcomeScreen;
-
+import dbproject.dataTypes.*;
+import java.sql.*;
 /**
  *
  * @author Chetan
  */
 public class Prof_Edit_HW extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
+    Hashtable hw_details;
     /**
      * Creates new form MainScreen
      */
@@ -20,9 +24,36 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         initComponents();
     }
     
+    //Overloaded constructor
+    public Prof_Edit_HW(DataType_courseAction inputObj) {
+        initComponents();
+        
+        courseActionObj = inputObj;
+        
+        jLabel1.setText(courseActionObj.courseObj.course_name);
+        
+        PopulateAllHWDetailsInHashTable();
+    }
     
-    public void setCourseName(String cName){
-        this.jLabel1.setText(cName);
+    /*
+    This method will get all the homeworks and it's related data from database
+    It will populate the homework combo box to select the homework.
+    For each homework it will store the old related data that we got from database in hashtable.
+    */
+    private void PopulateAllHWDetailsInHashTable()
+    {
+        try
+        {
+            //Step1: Get all the homeworks and it's related data to the course and which are editable (due date)
+
+            //Step2:
+
+            hw_details = new Hashtable();
+        }
+        catch(Throwable exce) {
+            exce.printStackTrace();
+        }
+        
     }
 
     /**
@@ -143,6 +174,11 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         jLabel10.setText("Select Homework to edit");
 
         jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox3.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                PopulateHomeworkOldValues(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -255,7 +291,13 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Code for 'Save' button
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions();
+        //Step1: Check if all the values are in correct format.
+        
+        //Step2: Update the perticular homework record in database.
+        
+        
+        //Step3: Navigate professor to course Actions page.
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -273,7 +315,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Back button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions();
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -282,10 +324,18 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Home button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ProfHome obj = new ProfHome();
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    /*
+    This method will populate old values from 
+    */
+    private void PopulateHomeworkOldValues(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_PopulateHomeworkOldValues
+        
+        
+    }//GEN-LAST:event_PopulateHomeworkOldValues
 
     /**
      * @param args the command line arguments

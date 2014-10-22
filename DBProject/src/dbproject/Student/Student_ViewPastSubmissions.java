@@ -11,6 +11,7 @@ import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -18,6 +19,7 @@ import dbproject.WelcomeScreen;
  */
 public class Student_ViewPastSubmissions extends javax.swing.JFrame {
 
+     DataType_courseAction courseActionObj;
     /**
      * Creates new form MainScreen
      */
@@ -29,9 +31,11 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
         
     }
     
-    
-    public void setCourseName(String cName){
-        this.jLabel1.setText(cName);
+    //Overloaded constrctor
+    public Student_ViewPastSubmissions(DataType_courseAction inputObj) {
+        initComponents();
+        courseActionObj = inputObj;
+        jLabel1.setText(courseActionObj.courseObj.course_name);
     }
 
     /**
@@ -281,7 +285,7 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     When View Attempt button clicked
     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Student_AttemptDetails obj = new Student_AttemptDetails();
+        Student_AttemptDetails obj = new Student_AttemptDetails(courseActionObj);
         obj.setVisible(true);
         
         this.dispose();

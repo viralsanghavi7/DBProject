@@ -11,6 +11,7 @@ import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -18,6 +19,7 @@ import dbproject.WelcomeScreen;
  */
 public class Student_CourseActions extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
     /**
      * Creates new form MainScreen
      */
@@ -25,9 +27,11 @@ public class Student_CourseActions extends javax.swing.JFrame {
         initComponents();
     }
     
-    
-    public void setCourseName(String cName){
-        this.jLabel1.setText(cName);
+    //Overloaded constrctor
+    public Student_CourseActions(DataType_courseAction inputObj) {
+        initComponents();
+        courseActionObj = inputObj;
+        jLabel1.setText(courseActionObj.courseObj.course_name);
     }
 
     /**
@@ -184,7 +188,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     Click of Attempt homework button
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        Student_AttemptHW obj = new Student_AttemptHW();
+        Student_AttemptHW obj = new Student_AttemptHW(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -193,7 +197,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     Click of View Past submissions button
     */
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        Student_ViewPastSubmissions obj = new Student_ViewPastSubmissions();
+        Student_ViewPastSubmissions obj = new Student_ViewPastSubmissions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -202,7 +206,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     Click of View Notifications button
     */
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        Student_Notification obj = new Student_Notification();
+        Student_Notification obj = new Student_Notification(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton8ActionPerformed
@@ -220,7 +224,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Student_Home obj = new Student_Home();
+        Student_Home obj = new Student_Home(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -229,7 +233,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     Home button
     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Student_Home obj = new Student_Home();
+        Student_Home obj = new Student_Home(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed

@@ -6,6 +6,7 @@
 package dbproject.Professor;
 import dbproject.WelcomeScreen;
 import java.io.*;
+import dbproject.dataTypes.*;
 
 /**
  *
@@ -13,11 +14,29 @@ import java.io.*;
  */
 public class Prof_Notification extends javax.swing.JFrame {
 
+    DataType_courseAction courseActionObj;
     /**
      * Creates new form MainScreen
      */
     public Prof_Notification() {
         initComponents();
+    }
+    
+    //overloaded constructor
+    public Prof_Notification(DataType_courseAction inputObj) {
+        initComponents();
+        courseActionObj = inputObj;
+        
+        GetNotificationsFromDB();
+    }
+    
+    /*
+    This method will get all the notifications for professor and for perticular course.
+    and will load it on the UI.
+    */   
+    private void GetNotificationsFromDB()
+    {
+        
     }
 
     /**
@@ -119,27 +138,26 @@ public class Prof_Notification extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(104, 104, 104)
-                                .addComponent(jButton3))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(151, 151, 151)
-                                .addComponent(jLabel1)))
-                        .addGap(0, 100, Short.MAX_VALUE))
+                        .addGap(151, 151, 151)
+                        .addComponent(jLabel1)
+                        .addGap(0, 157, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(103, 103, 103)
+                .addComponent(jButton3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                .addGap(4, 4, 4))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -178,7 +196,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     Back button
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions();
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -187,7 +205,14 @@ public class Prof_Notification extends javax.swing.JFrame {
     Click on 'Clear Notification' button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions();
+        
+        //Step1: Get all the selected notifications
+        
+        //Step2: Update the database to delete all the selected notifications.
+        
+        
+        //Step3: Navigate the user to Course Actions page.        
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -196,7 +221,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     Home button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ProfHome obj = new ProfHome();
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
