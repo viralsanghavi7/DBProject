@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dbproject.dataTypes;
+package dbproject.dataType;
 
 /**
  *
  * @author Viral
  */
-public class DataType_enrollment {
+public class DataType_taught_by{
     
-    public String student_id;
+    public String prof_id;
     public String course_id;
     public String semester;
     
