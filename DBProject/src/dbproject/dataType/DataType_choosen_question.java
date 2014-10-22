@@ -3,19 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dbproject.dataTypes;
-import java.util.*;
+package dbproject.dataType;
+
 /**
  *
  * @author Viral
  */
-public class DataType_attemt {
+public class DataType_choosen_question {
 
-Date atmpt_dt = new Date();
-public Integer atmpt_score;    
-public String student_id;
-public String assignment_id;
-
-
-    
+    public String assignment_id;
+    public String question_id;
 }

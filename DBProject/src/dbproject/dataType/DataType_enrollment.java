@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dbproject.dataTypes;
-import java.util.*;
+package dbproject.dataType;
+
 /**
  *
  * @author Viral
  */
-public class DataType_teaching_assistant extends DataType_user{
+public class DataType_enrollment {
     
+    public String student_id;
     public String course_id;
-    Date valid_till = new Date();
+    public String semester;
+    
 }
