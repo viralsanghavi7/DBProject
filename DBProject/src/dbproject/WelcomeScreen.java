@@ -214,8 +214,8 @@ public class WelcomeScreen extends javax.swing.JFrame {
             System.out.println(oops); 
             }
        
-        boolean bValidUser = true;
-        String typeOfUser = "S";  //P = Professor, T = TA and S = Student
+        //boolean bValidUser = false;
+        //String typeOfUser = "S";  //P = Professor, T = TA and S = Student
         
         // ToDo: Check from the database if the login credential are correct or not.
         

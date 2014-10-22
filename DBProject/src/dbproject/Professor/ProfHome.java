@@ -246,7 +246,7 @@ public class ProfHome extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-   //     obj.setVisible(true);
+        obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
