@@ -10,6 +10,7 @@ import dbproject.dataType.*;
 import dbproject.Professor.ProfHome;
 import dbproject.Student.Student_Home;
 import dbproject.dbconnection.dbconnection_dbObject;
+import java.awt.Color;
 import java.sql.*;
 /**
  *
@@ -26,7 +27,19 @@ public class WelcomeScreen extends javax.swing.JFrame {
     public WelcomeScreen() {
         
         initComponents();
-        jLabel4.setVisible(false);
+        jLabel4.setVisible(false);//Hide label warning
+        //Establish connection with DB
+        dbconnection_dbObject db = new dbconnection_dbObject();
+        stmt = db.getDBConnection();
+       
+    }
+    
+    //create a WelcomeScreen with a warning message warningMessage in color color, in jLabel4
+    public WelcomeScreen(String warningMessage, Color color) {
+        
+        initComponents();
+        jLabel4.setText(warningMessage);
+        jLabel4.setForeground(color);
         dbconnection_dbObject db = new dbconnection_dbObject();
         stmt = db.getDBConnection();
        
