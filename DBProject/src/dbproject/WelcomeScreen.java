@@ -19,7 +19,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
     /**
      * Creates new form WelcomeScreen
      */
-    
+    //
     Statement stmt = null;
     ResultSet rs = null;
     public WelcomeScreen() {
