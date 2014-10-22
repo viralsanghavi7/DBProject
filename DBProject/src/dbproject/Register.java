@@ -5,9 +5,13 @@
  */
 package dbproject;
 
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -16,14 +20,18 @@ import java.text.SimpleDateFormat;
 public class Register extends javax.swing.JFrame {
 
     //Attributes
-    Statement stmt = null;
-    ResultSet rs = null;
-    
+    private Statement stmt = null;
+    private ResultSet rs = null;
+    private String userType = new String("S");//Type of user 
+        
     /**
      * Creates new form Register
      */
     public Register() {
         initComponents();
+        //jLabel4.setVisible(false); //The label is empty - change color and text is wanna display warnings
+        dbconnection_dbObject db = new dbconnection_dbObject();
+        stmt = db.getDBConnection();
     }
 
     /**
@@ -63,14 +71,13 @@ public class Register extends javax.swing.JFrame {
         });
 
         jLabel4.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel4.setText("ID is not available.");
 
         jLabel5.setText("Registration");
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         jLabel6.setText("Select Type");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Student", "Teaching Assistant", "Professor" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -100,7 +107,7 @@ public class Register extends javax.swing.JFrame {
                                     .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel4))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(164, 164, 164)
@@ -146,11 +153,15 @@ public class Register extends javax.swing.JFrame {
         String loginId = jTextField2.getText().toString();
         char[] pwd_array = jPasswordField1.getPassword();
         String pwd = new String(pwd_array);
-        String userType = new String("S");
-         
         
-       //Query to see if loginId is already inside the DB DBUser - perhaps if constraints on it, we won't have to do that
-       String query = "SELECT USER_ID "
+        //Get the datetime
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date dateValue = new Date();
+        String date = new String(dateFormat.format(dateValue));
+        System.out.println(date);
+        
+        //Query to see if loginId is already inside the DB DBUser - perhaps if constraints on it, we won't have to do that
+        String query = "SELECT USER_ID "
                +"FROM DBUSER "
                +"WHERE USER_ID = '"+ loginId +"'";
         
@@ -159,38 +170,54 @@ public class Register extends javax.swing.JFrame {
         
             if (!rs.next()) {//The loginId is not already inside the DB
                 //Send the data in the DB
-                query = "INSERT INTO USER_ID (user_id, user_name, user_password, registration_date, user_type) "
-                        +"VALLUES ('"+ loginId +"', '"+ userName +"', '"+ pwd +"', '"+ new SimpleDateFormat("yyyy/MM/dd HH:mm:ss") +"', '"+ userType +"'";
+                query = "INSERT INTO dbuser (user_id, user_name, user_password, user_type) " //TODO : The registration date is not included
+                        +"VALUES ('"+ loginId +"', '"+ userName +"', '"+ pwd +"', '"+ userType +"')";
                 System.out.println(query);
-/*
                 try {
                     rs = stmt.executeQuery(query);
                 }
                 catch (Exception oops) {
-                    System.out.println(oops); 
+                    System.out.println("WARNING - Register - jButton1ActionPerformed - send data in DB : "+ oops); 
                 }
-*/
+                
+                
+                //Go to WelcomeScreen with a registration message
+                WelcomeScreen obj = new WelcomeScreen("Registration ok", Color.green);
+                obj.setVisible(true);
+                this.dispose();
+                
             }else{//The logId is inside the DB
                 jTextField1.setText(null);
+                jTextField2.setText(null);
                 jPasswordField1.setText(null);
-                jLabel4.setVisible(false);     
-               
+                jLabel4.setText("User ID not available. Please change.");
+                jLabel4.setForeground(Color.red);
+        
             }
             
              
         }
         catch (Exception oops) {
-            System.out.println(oops); 
+            System.out.println("WARNING - Register - jButton1ActionPerformed - check if user already exist : "+ oops); 
         }
-        
-        //Return to the Welcome page
-        WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
-        this.dispose();
+       
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    //Behavior of the jCombox that able selection of type of user
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
+        if (jComboBox1.getSelectedIndex() == 0) {//The type "student" has been selected
+            userType = "S";
+        }
+        else if (jComboBox1.getSelectedIndex() == 1) {//The type "Teaching Assistant" has been selected
+            userType = "T";
+        }
+        else if (jComboBox1.getSelectedIndex() == 2) {//The type "Professor" has been selected
+            userType = "P";
+        }
+        else{
+            userType = "S";
+        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
