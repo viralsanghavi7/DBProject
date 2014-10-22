@@ -24,12 +24,14 @@ public class ProfHome extends javax.swing.JFrame {
      * Creates new form MainScreen
      */
     public ProfHome() {
+        
         initComponents();
         bAddCourseClicked = false;
     }
     
     //Overloaded constructor
     public ProfHome(DataType_user inputObj) {
+        System.out.println("in non empty constructor");
         initComponents();
         bAddCourseClicked = false;
         
@@ -37,8 +39,9 @@ public class ProfHome extends javax.swing.JFrame {
         jLabel2.setText("Welcome " + userObj.user_name);
         
         // for TA view don't display these buttons
-        if (userObj.user_type.equals("T"))
+        if (inputObj.user_type.equals("t"))
         {
+            
             jButton2.setVisible(false);
             jButton1.setVisible(false);
         }
@@ -246,7 +249,8 @@ public class ProfHome extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-   //     obj.setVisible(true);
+        obj.setVisible(true);
+        
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
