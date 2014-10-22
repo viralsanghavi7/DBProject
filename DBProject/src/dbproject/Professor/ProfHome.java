@@ -5,7 +5,7 @@
  */
 package dbproject.Professor;
 
-import dbproject.dataTypes.*;
+import dbproject.dataType.*;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
 import dbproject.WelcomeScreen;
@@ -222,16 +222,16 @@ public class ProfHome extends javax.swing.JFrame {
         
         else
         {
-            DataType_course courseObj = new DataType_course();
+     ///       DataType_course courseObj = new DataType_course();
             
             //Get the information about the course and populate courseObj
             
             //temp
-            courseObj.course_name = "Database Management System";
+         //   courseObj.course_name = "Database Management System";
             
             //populate the courseAction object that need to be passed further.
             DataType_courseAction courseActionObj = new DataType_courseAction();
-            courseActionObj.courseObj = courseObj;
+       //     courseActionObj.courseObj = courseObj;
             courseActionObj.userObj = userObj;
             
             Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
@@ -246,7 +246,7 @@ public class ProfHome extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+   //     obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 

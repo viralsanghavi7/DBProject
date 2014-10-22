@@ -152,6 +152,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
         System.out.println(query);
         try {
         rs = stmt.executeQuery(query);
+        
         if (!rs.next()) {
                 jTextField1.setText(null);
                 jPasswordField1.setText(null);
@@ -196,7 +197,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
             
        
         }
-         catch (SQLException oops) {
+         catch (Exception oops) {
             System.out.println(oops); 
             }
        

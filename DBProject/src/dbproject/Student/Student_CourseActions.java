@@ -5,13 +5,14 @@
  */
 package dbproject.Student;
 
+import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.*;
 import dbproject.Professor.Prof_Edit_HW;
 import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
-import dbproject.dataTypes.*;
+import dbproject.dataType.*;
 
 /**
  *
@@ -31,7 +32,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     public Student_CourseActions(DataType_courseAction inputObj) {
         initComponents();
         courseActionObj = inputObj;
-        jLabel1.setText(courseActionObj.courseObj.course_name);
+    //    jLabel1.setText(courseActionObj.courseObj.course_name);
     }
 
     /**
@@ -216,7 +217,7 @@ public class Student_CourseActions extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+     //   obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 

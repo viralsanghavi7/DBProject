@@ -5,6 +5,7 @@
  */
 package dbproject.Professor;
 
+import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
 import dbproject.dataTypes.*;
@@ -28,7 +29,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         initComponents();
         courseActionObj = inputObj;
         
-        jLabel1.setText(courseActionObj.courseObj.course_name);
+    //    jLabel1.setText(courseActionObj.courseObj.course_name);
     }
 
     /**
@@ -230,7 +231,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+    //    obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package dbproject.Professor;
+import dbproject.dataType.DataType_courseAction;
 import dbproject.WelcomeScreen;
 import java.io.*;
 import dbproject.dataTypes.*;
@@ -188,7 +189,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+     //   obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 

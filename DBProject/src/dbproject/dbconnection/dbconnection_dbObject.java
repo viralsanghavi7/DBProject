@@ -50,6 +50,7 @@ public class dbconnection_dbObject {
                    
                 }
             } catch (ClassNotFoundException | SQLException oops) {
+                System.out.println(oops);
             }
         } else {
             

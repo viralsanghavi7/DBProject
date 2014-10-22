@@ -4,11 +4,12 @@
  * and open the template in the editor.
  */
 package dbproject.Student;
+import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.*;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
 import java.io.*;
-import dbproject.dataTypes.*;
+import dbproject.dataType.*;
 
 /**
  *
@@ -254,11 +255,11 @@ public class Student_Home extends javax.swing.JFrame {
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         
-        DataType_course courseObj = new DataType_course();
+   //     DataType_course courseObj = new DataType_course();
         //Get the information about the course and populate courseObj
         
         DataType_courseAction courseActionObj = new DataType_courseAction();
-            courseActionObj.courseObj = courseObj;
+   //         courseActionObj.courseObj = courseObj;
             courseActionObj.userObj = userObj;
         
         String subjectName = jComboBox1.getSelectedItem().toString();
@@ -274,7 +275,7 @@ public class Student_Home extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+    //    obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 

@@ -5,6 +5,7 @@
  */
 package dbproject.Student;
 
+import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.*;
 import dbproject.Professor.Prof_Edit_HW;
 import dbproject.Professor.Prof_Notification;
@@ -35,7 +36,7 @@ public class Student_AttemptHW extends javax.swing.JFrame {
         initComponents();
         courseActionObj = inputObj;
         AddHomeworkAsRadioButtons();        
-        jLabel1.setText(courseActionObj.courseObj.course_name);
+    //    jLabel1.setText(courseActionObj.courseObj.course_name);
     }
     
     private void AddHomeworkAsRadioButtons()
@@ -190,7 +191,7 @@ public class Student_AttemptHW extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-        obj.setVisible(true);
+     //   obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
