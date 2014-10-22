@@ -10,7 +10,10 @@ package dbproject.dbconnection;
 import java.sql.*;
 
 public class dbconnection_dbObject {
-
+    static private Connection conn = null;
+    static private Statement stmt = null;
+    
+    
     static final String jdbcURL
             = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 
@@ -22,9 +25,7 @@ public class dbconnection_dbObject {
 
     public static Statement getDBConnection() {
         
-    Connection conn = null;
-    Statement stmt = null;
-    ResultSet rs = null;
+        ResultSet rs = null;
         if (instance == null) {
             instance = new dbconnection_dbObject();
             try {
@@ -53,6 +54,7 @@ public class dbconnection_dbObject {
                 System.out.println(oops);
             }
         } else {
+            System.out.println("dbObject - already initialized");
             
         }
             return stmt;
