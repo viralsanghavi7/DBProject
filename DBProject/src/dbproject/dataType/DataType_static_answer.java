@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dbproject.dataTypes;
+package dbproject.dataType;
 
 /**
  *
  * @author Viral
  */
-public class DataType_course_topic {
+public class DataType_static_answer {
     
-    public String course_id;
-    String[] myIntArray;
+    public String answer_id;
+    public String question_id;
+    public String answer_state;
+    public String answer_text;
+    
 }

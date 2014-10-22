@@ -3,13 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dbproject.dataTypes;
-
+package dbproject.dataType;
+import java.util.*;
 /**
  *
  * @author Viral
  */
-public class DataType_professor extends DataType_user{
-    public String designation;
+public class DataType_attemt {
+
+Date atmpt_dt = new Date();
+public Integer atmpt_score;    
+public String student_id;
+public String assignment_id;
+
+
     
 }
