@@ -5,8 +5,11 @@
  */
 package dbproject;
 
+import dbproject.dbconnection.*;
 import dbproject.Professor.ProfHome;
 import dbproject.Student.Student_Home;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.*;
 /**
  *
  * @author Chetan
@@ -16,9 +19,26 @@ public class WelcomeScreen extends javax.swing.JFrame {
     /**
      * Creates new form WelcomeScreen
      */
+    
+    Statement stmt = null;
+    ResultSet rs = null;
     public WelcomeScreen() {
+        
         initComponents();
         jLabel4.setVisible(false);
+        dbconnection_dbObject db = new dbconnection_dbObject();
+        stmt = db.getDBConnection();
+        try {
+        rs = stmt.executeQuery("SELECT COF_NAME, PRICE FROM COFFEES");
+        while(rs.next()){
+            String s = rs.getString("COF_NAME");
+            float n = rs.getFloat("PRICE");
+            System.out.println(s + "    " + n);
+        }
+          }
+         catch (SQLException oops) {
+            System.out.println(oops); 
+            }
     }
 
     /**
