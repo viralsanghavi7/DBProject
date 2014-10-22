@@ -34,8 +34,8 @@ public class dbconnection_dbObject {
                 // driver available to clients.
                 Class.forName("oracle.jdbc.driver.OracleDriver");
 
-                String user = "pppingau";	// For example, "jsmith"    
-                String passwd = "200082730";	// Your 9 digit student ID number
+                String user = "wli29";	// For example, "jsmith"    
+                String passwd = "200063423";	// Your 9 digit student ID number
                 try {
 
 		// Get a connection from the first driver in the
