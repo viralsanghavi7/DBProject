@@ -27,21 +27,19 @@ public class WelcomeScreen extends javax.swing.JFrame {
     public WelcomeScreen() {
         
         initComponents();
-        jLabel4.setVisible(false);//Hide label warning
-        //Establish connection with DB
-        dbconnection_dbObject db = new dbconnection_dbObject();
-        stmt = db.getDBConnection();
-       
-    }
-    
-    //create a WelcomeScreen with a warning message warningMessage in color color, in jLabel4
-    public WelcomeScreen(String warningMessage, Color color) {
+        jLabel4.setVisible(false);
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+       System.out.println(stmt);
+        
+	   }
+	public WelcomeScreen(String warningMessage, Color color) {
         
         initComponents();
         jLabel4.setText(warningMessage);
         jLabel4.setForeground(color);
-        dbconnection_dbObject db = new dbconnection_dbObject();
-        stmt = db.getDBConnection();
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
        
     }
 
@@ -162,7 +160,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
         
        String query = "SELECT USER_ID,USER_NAME,USER_TYPE FROM DBUSER WHERE USER_ID = '"+ loginId + 
              "' AND USER_PASSWORD = '" + pwd +"'";
-        System.out.println(query);
+        
         try {
         rs = stmt.executeQuery(query);
         
@@ -179,16 +177,20 @@ public class WelcomeScreen extends javax.swing.JFrame {
              user_object.user_name = user_name;
              user_object.user_type = user_type;
              
+             
+             
              System.out.println(user_type);
             switch (user_type) {
-                case "p":
+                case "P":
+                case "T":
                     {
+                        
                         ProfHome obj = new ProfHome(user_object);
                         obj.setVisible(true);
                         this.dispose();
                         break;
                     }
-                case "s":
+                case "S":
                     {
                          
                         Student_Home obj = new Student_Home(user_object);
@@ -196,13 +198,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
                         this.dispose();
                         break;
                     }
-                case "t":
-                    {
-                        Student_Home obj = new Student_Home();
-                        obj.setVisible(true);
-                        this.dispose();
-                        break;
-                    }
+               
             }
             
              

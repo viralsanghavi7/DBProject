@@ -28,13 +28,13 @@ public class Student_Home extends javax.swing.JFrame {
      */
     public Student_Home() {
         initComponents();
-        dbconnection_dbObject db = new dbconnection_dbObject();
-        stmt = db.getDBConnection();
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
         
         jLabel1.setVisible(false);
         jComboBox1.setVisible(false);
         jButton3.setVisible(false);
-        
+        jButton2.setVisible(false);
         jLabel2.setVisible(false);
         jTextField1.setVisible(false);
         jButton5.setVisible(false);
@@ -47,9 +47,8 @@ public class Student_Home extends javax.swing.JFrame {
     //Overloaded constructor
     public Student_Home(DataType_user inputObj) {
         initComponents();
-        dbconnection_dbObject db = new dbconnection_dbObject();
-        stmt = db.getDBConnection();
-        
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
         userObj = inputObj;
         
         jLabel1.setVisible(false);
@@ -321,7 +320,7 @@ public class Student_Home extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-    //    obj.setVisible(true);
+       obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
