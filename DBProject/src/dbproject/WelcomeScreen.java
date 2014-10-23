@@ -30,7 +30,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
         jLabel4.setVisible(false);
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         stmt = db.stmt;
-       System.out.println(stmt);
+     //  System.out.println(stmt);
         
 	   }
 	public WelcomeScreen(String warningMessage, Color color) {
