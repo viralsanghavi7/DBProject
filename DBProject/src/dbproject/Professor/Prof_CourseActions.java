@@ -11,7 +11,7 @@ import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
-import dbproject.dataTypes.*;
+import dbproject.dataType.*;
 
 /**
  *
@@ -20,6 +20,7 @@ import dbproject.dataTypes.*;
 public class Prof_CourseActions extends javax.swing.JFrame {
 
     DataType_courseAction courseActionObj;
+    DataType_course course;
     /**
      * Creates new form MainScreen
      */
@@ -36,7 +37,23 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
         
         // for TAs don't display these buttons        
-        if (courseActionObj.userObj.user_type.equals("T"))
+        if (courseActionObj.userObj!=null && courseActionObj.userObj.user_type.equals("T"))
+        {
+            jButton4.setVisible(false);
+            jButton5.setVisible(false);
+            jButton6.setVisible(false);
+            jButton8.setVisible(false);
+        }
+    }
+    
+    public Prof_CourseActions(DataType_courseAction inputObj, DataType_course course) {
+        initComponents();
+        
+        courseActionObj = inputObj;
+    //    jLabel1.setText(courseActionObj.courseObj.course_name);
+        jLabel1.setText(course.course_name);
+        // for TAs don't display these buttons        
+        if (courseActionObj.userObj!=null && courseActionObj.userObj.user_type.equals("T"))
         {
             jButton4.setVisible(false);
             jButton5.setVisible(false);
