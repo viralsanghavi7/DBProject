@@ -6,10 +6,12 @@
 package dbproject.Professor;
 
 import dbproject.dataType.*;
-import dbproject.Professor.Prof_CourseActions;
+import dbproject.Professor.*;
 import dbproject.WelcomeScreen;
 import dbproject.WelcomeScreen;
+import dbproject.dbconnection.dbconnection_dbObject;
 import java.io.*;
+import java.sql.*;
 
 /**
  *
@@ -19,29 +21,42 @@ public class ProfHome extends javax.swing.JFrame {
 
     DataType_user userObj;
     boolean bAddCourseClicked;
-    
+    public String query;
+    Statement stmt = null;
+    ResultSet rs = null;
+    public Connection conn = null;
+    DataType_course[] course_array = new DataType_course[100];
+    DataType_course temp_course = new DataType_course();
+    String[] course_list = new String[100];
+
     /**
      * Creates new form MainScreen
      */
     public ProfHome() {
-        
+      //  System.out.println("here");
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        conn = db.conn;
         initComponents();
+
         bAddCourseClicked = false;
     }
-    
+
     //Overloaded constructor
     public ProfHome(DataType_user inputObj) {
-        System.out.println("in non empty constructor");
+      //  System.out.println("in non empty constructor");
         initComponents();
         bAddCourseClicked = false;
-        
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        conn = db.conn;
         userObj = inputObj;
         jLabel2.setText("Welcome " + userObj.user_name);
-        
+        init_course_list();
+
         // for TA view don't display these buttons
-        if (inputObj.user_type.equals("t"))
-        {
-            
+        if (inputObj.user_type.equals("t")) {
+
             jButton2.setVisible(false);
             jButton1.setVisible(false);
         }
@@ -118,7 +133,12 @@ public class ProfHome extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setSelectedItem(0);
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Select a course from dropdown:");
 
@@ -163,7 +183,7 @@ public class ProfHome extends javax.swing.JFrame {
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(229, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -188,71 +208,77 @@ public class ProfHome extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     /*
-    Code executed when 'Select Course ' Button is clicked
-    */
+     Code executed when 'Select Course ' Button is clicked
+     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       jLabel1.setText("Select a course from dropdown:");
+        jLabel1.setText("Select a course from dropdown:");
+        bAddCourseClicked = false;
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /*
-    Code executed when 'Add Course ' Button is clicked
-    */
+     Code executed when 'Add Course ' Button is clicked
+     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         jLabel1.setText("Select a course from dropdown to add:");
         bAddCourseClicked = true;
-        
+
         jComboBox1.removeAllItems();
+        add_course_list();
         //Fetch a list of new courses which are not present in the professor-course relationship
         //and populate the dropdown with such courses.
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /*
-    'Continue' button click
-    */
+     'Continue' button click
+     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         String subjectName = jComboBox1.getSelectedItem().toString();
-        
-        if (bAddCourseClicked)
-        {
+        int index = jComboBox1.getSelectedIndex();
+        if (bAddCourseClicked) {
+            System.out.println(userObj.user_id);
             //Insert the relationship between course and professor
             //fetch the courses to populate the dropdown again.
-            
+
             //Allow the user to see the added course in the dropdown along with previous courses.
-            jLabel1.setText("Select a course from dropdown:");
-        }
-        
-        else
-        {
+            //   jLabel1.setText("Select a course from dropdown:");
+            query = "INSERT INTO taught_by (prof_id, course_id) "
+                    + "VALUES ('" + userObj.user_id + "','" + course_list[index] + "')";
+            System.out.println(query);
+            try {
+                rs = stmt.executeQuery(query);
+
+            } catch (Exception oops) {
+                System.out.println("WARNING - Register - jButton1ActionPerformed - send data in DBUSER : " + oops);
+            }
+
+            go_to_prof_action(index);
+        } else {
      ///       DataType_course courseObj = new DataType_course();
-            
+
             //Get the information about the course and populate courseObj
-            
             //temp
-         //   courseObj.course_name = "Database Management System";
-            
+            //   courseObj.course_name = "Database Management System";
             //populate the courseAction object that need to be passed further.
-            DataType_courseAction courseActionObj = new DataType_courseAction();
-       //     courseActionObj.courseObj = courseObj;
-            courseActionObj.userObj = userObj;
-            
-            Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
-            obj.setVisible(true);
-        
-            this.dispose();
+            go_to_prof_action(index);
         }
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /*
-    Code if user clicks on log out.
-    */
+     Code if user clicks on log out.
+     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
         obj.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,7 +312,7 @@ public class ProfHome extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ProfHome().setVisible(true);
-                
+
             }
         });
     }
@@ -302,4 +328,76 @@ public class ProfHome extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
+
+    private void add_course_list() {
+
+        int i = 0;
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        query = "(SELECT C.COURSE_ID, C.COURSE_NAME, C.COURSE_LEVEL, C.COURSE_START_DT, C.COURSE_END_DT,"
+                + "C.NO_OF_STUDENTS_ENROLLED, C.MAX_STUDENTS_ALLOWED FROM COURSE C, TAUGHT_BY T WHERE"
+                + " T.COURSE_ID <> C.COURSE_ID)";
+        System.out.println(query);
+        try {
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                temp_course = new DataType_course();
+                temp_course.course_id = rs.getString("COURSE_ID");
+                temp_course.course_name = rs.getString("COURSE_NAME");
+                temp_course.course_level = rs.getString("COURSE_LEVEL");
+                temp_course.course_start_dt = rs.getDate("COURSE_START_DT");
+                temp_course.course_end_dt = rs.getDate("COURSE_END_DT");
+                temp_course.max_students_allowed = rs.getInt("MAX_STUDENTS_ALLOWED");
+                temp_course.no_of_students_enrolled = rs.getInt("NO_OF_STUDENTS_ENROLLED");
+
+                course_array[i] = temp_course;
+                course_list[i] = temp_course.course_id;
+                jComboBox1.addItem(rs.getString("COURSE_NAME"));
+            }
+        } catch (Exception oops) {
+            System.out.println("ProfHome.java:add_course_list() " + oops);
+        }
+    }
+
+    public void go_to_prof_action(int index) {
+        DataType_courseAction courseActionObj = new DataType_courseAction();
+        //     courseActionObj.courseObj = courseObj;
+        courseActionObj.userObj = userObj;
+        course_array[index] = temp_course;
+        System.out.println(course_array[index]);
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj,course_array[index]);
+        obj.setVisible(true);
+
+        this.dispose();
+    }
+
+    private void init_course_list() {
+
+        int i = 0;
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        query = "(SELECT T.PROF_ID,T.COURSE_ID,C.COURSE_NAME,C.COURSE_LEVEL, C.COURSE_START_DT,"
+                + "C.COURSE_END_DT, C.MAX_STUDENTS_ALLOWED, C.NO_OF_STUDENTS_ENROLLED "
+                + " FROM TAUGHT_BY T,COURSE C WHERE T.PROF_ID='"
+                + userObj.user_id + "' AND C.COURSE_ID = T.COURSE_ID)";
+       // System.out.println(query);
+        try {
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                temp_course = new DataType_course();
+                temp_course.course_id = rs.getString("COURSE_ID");
+                     temp_course.course_name = rs.getString("COURSE_NAME");
+                        temp_course.course_level = rs.getString("COURSE_LEVEL");
+                        temp_course.course_start_dt = rs.getDate("COURSE_START_DT");
+                        temp_course.course_end_dt = rs.getDate("COURSE_END_DT");
+                        temp_course.max_students_allowed = rs.getInt("MAX_STUDENTS_ALLOWED");
+                        temp_course.no_of_students_enrolled = rs.getInt("NO_OF_STUDENTS_ENROLLED");
+                        
+                course_array[i] = temp_course;
+                course_list[i] = temp_course.course_id;
+                jComboBox1.addItem(rs.getString("COURSE_NAME"));
+            }
+        } catch (Exception oops) {
+            System.out.println("ProfHome.java:add_course_list() " + oops);
+
+        }
+    }
 }
