@@ -5,14 +5,13 @@
  */
 package dbproject.Student;
 
-import dbproject.dataType.DataType_courseAction;
+import dbproject.dataType.*;
 import dbproject.Professor.*;
 import dbproject.Professor.Prof_Edit_HW;
 import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
-import dbproject.dataTypes.*;
 
 /**
  *

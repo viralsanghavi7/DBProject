@@ -4,10 +4,9 @@
  * and open the template in the editor.
  */
 package dbproject.Professor;
-import dbproject.dataType.DataType_courseAction;
+import dbproject.dataType.*;
 import dbproject.WelcomeScreen;
 import java.io.*;
-import dbproject.dataTypes.*;
 
 /**
  *

@@ -5,10 +5,9 @@
  */
 package dbproject.Professor;
 
-import dbproject.dataType.DataType_courseAction;
+import dbproject.dataType.*;
 import java.util.*;
 import dbproject.WelcomeScreen;
-import dbproject.dataTypes.*;
 import java.sql.*;
 /**
  *
