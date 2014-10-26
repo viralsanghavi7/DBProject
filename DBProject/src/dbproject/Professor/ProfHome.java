@@ -364,7 +364,7 @@ public class ProfHome extends javax.swing.JFrame {
         courseActionObj.userObj = userObj;
         course_array[index] = temp_course;
         System.out.println(course_array[index]);
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj,course_array[index]);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj,course_array[index]);
         obj.setVisible(true);
 
         this.dispose();

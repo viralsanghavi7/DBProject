@@ -8,7 +8,11 @@ package dbproject.Professor;
 import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
-import dbproject.dataTypes.*;
+import dbproject.dataType.DataType_user;
+import dbproject.dataType.*;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  *
@@ -16,8 +20,16 @@ import dbproject.dataTypes.*;
  */
 public class Prof_Add_Remove_Question extends javax.swing.JFrame {
 
-    DataType_courseAction courseActionObj;
+    DataType_user userObj;
+    DataType_course  courseObj;
+    Statement stmt;
+    ResultSet rs;
+    String query;
+    String query1;
+    String[] assignment_name_array = new String[100];
+    String[] topic_name_array = new String[100];
     /**
+     * 
      * Creates new form MainScreen
      */
     public Prof_Add_Remove_Question() {
@@ -25,9 +37,14 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     }
     
     //Overloaded constructor
-    public Prof_Add_Remove_Question(DataType_courseAction inputObj) {
+    public Prof_Add_Remove_Question(DataType_user inputObj, DataType_course course) {
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        userObj = inputObj;
+        courseObj = course;
         initComponents();
-        courseActionObj = inputObj;
+        load_assignments();
+        
         
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
     }
@@ -52,8 +69,6 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox();
         jButton2 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -121,11 +136,13 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
 
         jLabel2.setText("Select Homework");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Select Topic");
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton2.setText("Search Questions");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -133,21 +150,6 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-
-        jScrollPane1.setAutoscrolls(true);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
 
         jButton3.setText("Submit");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -161,9 +163,9 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -172,14 +174,11 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
                             .addComponent(jComboBox1, 0, 178, Short.MAX_VALUE)
                             .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
-                .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(187, 187, 187)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,9 +195,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
                             .addGap(2, 2, 2)
                             .addComponent(jComboBox2))
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(13, 13, 13)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(403, 403, 403)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6))
         );
@@ -239,7 +236,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj,courseObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -253,7 +250,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         //Step2 : Store all the questions in choosen_question table.
         
         //Step3 : Navigate professor to courseAction page.
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -262,7 +259,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     Home button
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ProfHome obj = new ProfHome(courseActionObj.userObj);
+        ProfHome obj = new ProfHome(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -270,6 +267,10 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -321,7 +322,34 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    private void load_assignments() {
+        
+        query = "SELECT assignment_name from assignment where course_id ='" + courseObj.course_id +"'"; 
+        query1= "SELECT topic_name from topic t, course_topic ct where ct.course_id ='"+ courseObj.course_id 
+                +"' and ct.topic_id = t.topic_id"; 
+                
+       // System.out.println(query);
+        try {
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                
+                jComboBox1.addItem(rs.getString("assignment_name"));
+            }
+            
+            rs = stmt.executeQuery(query1);
+            while (rs.next()) {
+                
+                jComboBox2.addItem(rs.getString("topic_name"));
+            }
+            
+        } catch (Exception oops) {
+            System.out.println("ProfAss_Remove_Question.java:load_assignments() " + oops);
+
+        }
+    
+        
+    }
+    
 }
