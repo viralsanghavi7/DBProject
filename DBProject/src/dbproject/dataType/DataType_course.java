@@ -14,8 +14,8 @@ public class DataType_course {
     public String course_id;
     public String  course_name;
     public String course_level;
-    Date course_start_dt = new Date();
-    Date course_end_dt= new Date();
+    public Date course_start_dt = new Date();
+    public Date course_end_dt= new Date();
     public Integer no_of_students_enrolled;
     public Integer max_students_allowed;
 }

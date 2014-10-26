@@ -3,7 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/F:/NCSU/Fall%202014/CSC%20540%20-%20DBMS/Project/DBProject/DBProject/src/dbproject/WelcomeScreen.java</file>
+=======
+            <file>file:/C:/Users/Viral/Desktop/Subjects/DBMS/New/DBProject/DBProject/src/dbproject/Register.java</file>
+            <file>file:/C:/Users/Viral/Desktop/Subjects/DBMS/New/DBProject/DBProject/src/dbproject/WelcomeScreen.java</file>
+            <file>file:/C:/Users/Viral/Desktop/Subjects/DBMS/New/DBProject/DBProject/src/dbproject/dbconnection/dbconnection_dbObject.java</file>
+            <file>file:/C:/Users/Viral/Desktop/Subjects/DBMS/New/DBProject/DBProject/src/dbproject/Professor/Prof_CourseActions.java</file>
+            <file>file:/C:/Users/Viral/Desktop/Subjects/DBMS/New/DBProject/DBProject/src/dbproject/Professor/ProfHome.java</file>
+            <file>file:/C:/Users/Viral/Desktop/Subjects/DBMS/New/DBProject/DBProject/src/dbproject/dataType/DataType_course.java</file>
+>>>>>>> 901fe39606721181c0a54695caf69f56323d86e2
         </group>
     </open-files>
 </project-private>

@@ -7,6 +7,7 @@ package dbproject.Professor;
 
 import dbproject.dataType.*;
 import dbproject.WelcomeScreen;
+import dbproject.dataType.DataType_user;
 
 /**
  *
@@ -14,7 +15,7 @@ import dbproject.WelcomeScreen;
  */
 public class Prof_Report extends javax.swing.JFrame {
 
-    DataType_courseAction courseActionObj;
+    DataType_user userObj;
     /**
      * Creates new form MainScreen
      */
@@ -23,9 +24,9 @@ public class Prof_Report extends javax.swing.JFrame {
     }
     
     //Overloaded constructor
-    public Prof_Report(DataType_courseAction inputObj) {
+    public Prof_Report(DataType_user inputObj) {
         initComponents();
-        courseActionObj = inputObj;
+        userObj = inputObj;
         
         PopulateComboBoxData();
     }
@@ -423,7 +424,7 @@ public class Prof_Report extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-     //   obj.setVisible(true);
+        obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
@@ -431,7 +432,7 @@ public class Prof_Report extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -440,7 +441,7 @@ public class Prof_Report extends javax.swing.JFrame {
     Home button
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ProfHome obj = new ProfHome(courseActionObj.userObj);
+        ProfHome obj = new ProfHome(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed

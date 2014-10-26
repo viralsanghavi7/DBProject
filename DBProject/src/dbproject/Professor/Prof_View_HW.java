@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class Prof_View_HW extends javax.swing.JFrame {
 
-    DataType_courseAction courseActionObj;
+    DataType_user userObj;
     Hashtable currentHWKeys;
     Hashtable pastDueHWKeys;
     
@@ -28,9 +28,9 @@ public class Prof_View_HW extends javax.swing.JFrame {
     }
     
     //Overloaded constructor
-    public Prof_View_HW(DataType_courseAction inputObj) {
+    public Prof_View_HW(DataType_user inputObj) {
         initComponents();
-        courseActionObj = inputObj;
+        userObj = inputObj;
         
         populateHomeworksComboboxes();
     }
@@ -361,7 +361,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-    //    obj.setVisible(true);
+       obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
@@ -369,7 +369,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
     Back
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -378,7 +378,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
     Home Button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        ProfHome obj = new ProfHome(courseActionObj.userObj);
+        ProfHome obj = new ProfHome(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
