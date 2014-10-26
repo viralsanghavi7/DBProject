@@ -8,6 +8,7 @@ package dbproject.Professor;
 import dbproject.dataType.DataType_courseAction;
 import java.util.*;
 import dbproject.WelcomeScreen;
+import dbproject.dataType.DataType_user;
 import dbproject.dataTypes.*;
 import java.sql.*;
 /**
@@ -16,7 +17,7 @@ import java.sql.*;
  */
 public class Prof_Edit_HW extends javax.swing.JFrame {
 
-    DataType_courseAction courseActionObj;
+    DataType_user userObj;
     Hashtable hw_details;
     /**
      * Creates new form MainScreen
@@ -26,10 +27,10 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     }
     
     //Overloaded constructor
-    public Prof_Edit_HW(DataType_courseAction inputObj) {
+    public Prof_Edit_HW(DataType_user inputObj) {
         initComponents();
         
-        courseActionObj = inputObj;
+        userObj = inputObj;
         
      //   jLabel1.setText(courseActionObj.courseObj.course_name);
         
@@ -290,7 +291,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         
         
         //Step3: Navigate professor to course Actions page.
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -300,7 +301,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-       // obj.setVisible(true);
+        obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
@@ -308,7 +309,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Back button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -317,7 +318,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Home button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ProfHome obj = new ProfHome(courseActionObj.userObj);
+        ProfHome obj = new ProfHome(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed

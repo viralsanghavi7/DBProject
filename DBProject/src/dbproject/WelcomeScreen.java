@@ -179,7 +179,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
              
              
              
-             System.out.println(user_type);
+           //  System.out.println(user_type);
             switch (user_type) {
                 case "P":
                 case "T":

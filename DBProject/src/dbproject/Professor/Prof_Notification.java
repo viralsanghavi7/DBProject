@@ -6,6 +6,7 @@
 package dbproject.Professor;
 import dbproject.dataType.DataType_courseAction;
 import dbproject.WelcomeScreen;
+import dbproject.dataType.DataType_user;
 import java.io.*;
 import dbproject.dataTypes.*;
 
@@ -15,7 +16,7 @@ import dbproject.dataTypes.*;
  */
 public class Prof_Notification extends javax.swing.JFrame {
 
-    DataType_courseAction courseActionObj;
+    DataType_user userObj;
     /**
      * Creates new form MainScreen
      */
@@ -24,9 +25,9 @@ public class Prof_Notification extends javax.swing.JFrame {
     }
     
     //overloaded constructor
-    public Prof_Notification(DataType_courseAction inputObj) {
+    public Prof_Notification(DataType_user inputObj) {
         initComponents();
-        courseActionObj = inputObj;
+        userObj = inputObj;
         
         GetNotificationsFromDB();
     }
@@ -189,7 +190,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-     //   obj.setVisible(true);
+        obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -197,7 +198,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     Back button
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -213,7 +214,7 @@ public class Prof_Notification extends javax.swing.JFrame {
         
         
         //Step3: Navigate the user to Course Actions page.        
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -222,7 +223,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     Home button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ProfHome obj = new ProfHome(courseActionObj.userObj);
+        ProfHome obj = new ProfHome(userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
