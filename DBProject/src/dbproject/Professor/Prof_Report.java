@@ -7,7 +7,11 @@ package dbproject.Professor;
 
 import dbproject.dataType.*;
 import dbproject.WelcomeScreen;
-import dbproject.dataType.DataType_user;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 
 /**
  *
@@ -15,7 +19,13 @@ import dbproject.dataType.DataType_user;
  */
 public class Prof_Report extends javax.swing.JFrame {
 
-    DataType_user userObj;
+    DataType_courseAction courseActionObj;
+    ArrayList<String> Homeworks, Students, StudentHomework;
+    ResultSet rs;
+    Statement stmt;
+    dbconnection_dbObject db;
+    String query;
+    
     /**
      * Creates new form MainScreen
      */
@@ -24,21 +34,58 @@ public class Prof_Report extends javax.swing.JFrame {
     }
     
     //Overloaded constructor
-    public Prof_Report(DataType_user inputObj) {
+    public Prof_Report(DataType_courseAction inputObj) {
         initComponents();
-        userObj = inputObj;
-        
+        courseActionObj = inputObj;
+        Homeworks = new ArrayList<String>();
+        Students = new ArrayList<String>();
+        StudentHomework = new ArrayList<String>();
         PopulateComboBoxData();
+        db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
     }
     
     //Method to populate all the comboboxes in all the tabs available on the UI.
     private void PopulateComboBoxData(){
         
+        
         //Step1: Populate jComboBox1 in Homework related stats tab
+        //Step2: Populate jComboBox2 in Student related stats tab
         
-        //Step2: Populate jComboBox2 and jComboBox2 in Student related stats tab
+        jComboBox1.addItem("--Select Homework");
+        jComboBox2.addItem("--Select Student");
+        try {
+            //To load the list of homeworks in select homework dropdown
+            query = "SELECT assignment_id, assignment_name from assignment where course_id ='" 
+                    + courseActionObj.courseObj.course_id +"'"
+                    + " and professor_id = '" + courseActionObj.userObj.user_id;
+            
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                Homeworks.add(rs.getString("assignment_id"));
+                jComboBox1.addItem(rs.getString("assignment_name"));                
+            }
+            
+            
+            //To load the list of students in select student dropdown.
+            query = "select student_id, student_name from student s, enrollment e" +
+                    "where s.student_id = e.student_id and " +
+                    "s.course_id = '" + courseActionObj.courseObj.course_id +"'";
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                Students.add(rs.getString("student_id"));
+                jComboBox2.addItem(rs.getString("student_name"));
+            }
+            
+            
+            //Step3: Populate the table in Max score student tab
+            
+        } catch (Exception oops) {
+            System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
+
+        }
         
-        //Step3: Populate the table in Max score student tab
+        
     }
     
     /**
@@ -84,6 +131,8 @@ public class Prof_Report extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
         jInternalFrame3 = new javax.swing.JInternalFrame();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -146,7 +195,7 @@ public class Prof_Report extends javax.swing.JFrame {
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
                 .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(285, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -154,8 +203,6 @@ public class Prof_Report extends javax.swing.JFrame {
         jInternalFrame1.setVisible(true);
 
         jLabel2.setText("Select Homework");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton2.setText("View");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -178,11 +225,6 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel9.setText("List of students who did not submit this HW:");
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(jList1);
 
         jLabel10.setText("Students who scored first max on first attempt:");
@@ -197,36 +239,35 @@ public class Prof_Report extends javax.swing.JFrame {
                 .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInternalFrame1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
                         .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel11))
+                            .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel6))
                             .addGroup(jInternalFrame1Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel8))
                             .addGroup(jInternalFrame1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addComponent(jButton2))
-                            .addGroup(jInternalFrame1Layout.createSequentialGroup()
-                                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel5))
-                                .addGap(18, 18, 18)
-                                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel4)))))
-                    .addGroup(jInternalFrame1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel11))
-                    .addGroup(jInternalFrame1Layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(jLabel9)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)))))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
         jInternalFrame1Layout.setVerticalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,29 +275,29 @@ public class Prof_Report extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
-                .addGap(18, 18, 18)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4))
-                .addGap(18, 18, 18)
+                .addGap(27, 27, 27)
                 .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel5))
+                .addGap(26, 26, 26)
                 .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jLabel8))
-                .addGap(18, 18, 18)
-                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addGap(35, 35, 35)
                 .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(jLabel11))
-                .addGap(71, 71, 71))
+                .addGap(44, 44, 44)
+                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(119, 119, 119))
         );
 
         jTabbedPane1.addTab("Homework wise statistics", jInternalFrame1);
@@ -265,7 +306,11 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel12.setText("Select student from the list:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("View");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -274,9 +319,13 @@ public class Prof_Report extends javax.swing.JFrame {
             }
         });
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
+            }
+        });
 
-        jLabel13.setText("Total score for each HW:");
+        jLabel13.setText("Homeworks attempted by this student");
 
         jLabel14.setText("HW_Score_val");
 
@@ -290,34 +339,40 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel19.setText("no_of_atmpts");
 
+        jLabel20.setText("Score selection method");
+
+        jLabel21.setText("method_value");
+
         javax.swing.GroupLayout jInternalFrame2Layout = new javax.swing.GroupLayout(jInternalFrame2.getContentPane());
         jInternalFrame2.getContentPane().setLayout(jInternalFrame2Layout);
         jInternalFrame2Layout.setHorizontalGroup(
             jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame2Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
-                .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jInternalFrame2Layout.createSequentialGroup()
-                        .addComponent(jLabel15)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel16))
-                    .addGroup(jInternalFrame2Layout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addGap(26, 26, 26)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3))
-                    .addGroup(jInternalFrame2Layout.createSequentialGroup()
-                        .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel13)
                             .addComponent(jLabel17)
-                            .addComponent(jLabel18))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel20))
+                        .addGap(26, 26, 26)
                         .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel19)
                             .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14))))
-                .addContainerGap(38, Short.MAX_VALUE))
+                            .addComponent(jLabel19)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel21)))
+                    .addGroup(jInternalFrame2Layout.createSequentialGroup()
+                        .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel15))
+                        .addGap(26, 26, 26)
+                        .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel16)
+                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(27, 27, 27)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jInternalFrame2Layout.setVerticalGroup(
             jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -325,13 +380,23 @@ public class Prof_Report extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
-                .addGap(27, 27, 27)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
                 .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel16))
+                .addGap(85, 85, 85)
+                .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jInternalFrame2Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel13))
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(52, 52, 52)
+                .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel21))
+                .addGap(31, 31, 31)
                 .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(jLabel17))
@@ -339,11 +404,7 @@ public class Prof_Report extends javax.swing.JFrame {
                 .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
                     .addComponent(jLabel19))
-                .addGap(50, 50, 50)
-                .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel16))
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Student wise statistics", jInternalFrame2);
@@ -369,14 +430,14 @@ public class Prof_Report extends javax.swing.JFrame {
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jInternalFrame3Layout.setVerticalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -388,7 +449,7 @@ public class Prof_Report extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -432,7 +493,7 @@ public class Prof_Report extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj, courseActionObj.courseObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -441,7 +502,7 @@ public class Prof_Report extends javax.swing.JFrame {
     Home button
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ProfHome obj = new ProfHome(userObj);
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -449,20 +510,194 @@ public class Prof_Report extends javax.swing.JFrame {
     //View button in Homework related stats tab clicked
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //Step1: Get the selected homework from the dropdown jComboBox1
+        String selectedHW = Homeworks.get(jComboBox1.getSelectedIndex());
         
         //Step2: Get the corresponding data from database for that homework
-        
+        try
+        {
+            //For max and min score of homework
+            query = "select max(atmpt_score) as maximum, min(atmpt_score) as minimum as min from attempt "
+                    + "where assignment_id = '" + selectedHW + "'";
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                jLabel4.setText(rs.getString("maximum"));
+                jLabel6.setText(rs.getString("minimum"));
+            }
+            
+            //For avg number of attempts for homework
+            query = "select avg(temp.number1) as average from (select count(*) as number1 from attempt "
+                    + "where assignment_id = '" + selectedHW + "' group by student_id) temp ";
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                jLabel8.setText(rs.getString("average"));
+            }
+            
+            //For student name who scored max first for particular homework
+            query = "select user_name from dbuser where user_id = "
+                    + "(select student_id from (select student_id from attempt where assignment_id = '"
+                    + selectedHW + "' order by atmpt_score desc, atmpt dt asc) where rownum = 1)";
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                jLabel11.setText(rs.getString("user_name"));
+            }   
+                
+            //For finding the list of students who did not attempt particular homework
+            query = "select e.student_id, db.user_name from dbuser db, enrollment e "
+                    + " where db.user_id = e.student_id and e.course_id = '" 
+                    + courseActionObj.courseObj.course_id + "'"
+                    + " minus (select distinct at.student_id, db.user_name from attempt at, "
+                    + " dbuser db where assignment_id = '" + selectedHW + "')";
+            
+            rs = stmt.executeQuery(query);
+            DefaultListModel studentList = new DefaultListModel();
+            while (rs.next()) {
+                studentList.addElement(rs.getString("user_name"));
+            }
+            jList1.setModel(studentList);            
+            
+        } catch (Exception oops) {
+            System.out.println("Prof_Report.java:jButton2ActionPerformed() " + oops);
+
+        }
         //Step3: Populate the data on the UI.
     }//GEN-LAST:event_jButton2ActionPerformed
 
     //View button in Student related stats tab clicked
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //Step1: Get the selected student from the dropdown jComboBox2
+        String selectedStudentID = Students.get(jComboBox2.getSelectedIndex());
         
-        //Step2: Get the selected homework from the dropdown jComboBox3
+        //Step2: Get the value of average score accross all homeworks for selected student
+        try
+        {            
         
-        //Step3: Get all the details for combination of student and homework we got from above 2 steps
+        query = "select avg(temp.homework_score) as avg_hw_score from " +
+                "(select a.assignment_id, a.assignment_name, " +
+                " CASE" +
+                        //for score selection = latest of all attempts
+                "	WHEN a.score_selection_method = 1 THEN " +
+                "		(select a1.atmpt_score " +
+                "		from attempt a1 where " +
+                "		a.assignment_id = a1.assignment_id " +
+                "		and a1.atmpt_dt =  " +
+                "		(select max(atmpt_dt) from attempt a2 " +
+                "		where a1.student_id = a2.student_id " +
+                " 		and a1.assignment_id = a2.assignment_id " +
+                "		and a.assignment_id = a2.assignment_id " +
+                "		and a2.student_id = '" + selectedStudentID + "'" +
+                "		group by a2.student_id, a2.assignment_id)) " +
+                        //for score selection = maximum of all attempts
+                "	WHEN a.score_selection_method = 2 THEN " +
+                "		(select max(a3.atmpt_score) from attempt a3 " +
+                "		where a.assignment_id = a3.assignment_id " +
+                "		and a3.student_id = '" + selectedStudentID + "'" +
+                "		group by a3.student_id, a3.assignment_id) " +
+                        //for score selection = average of all attempts
+                "	when a.score_selection_method = 3 THEN " +
+                "		(select avg(a4.atmpt_score) from attempt a4 " +
+                "		where a.assignment_id = a4.assignment_id " +
+                "		and a4.student_id = '" + selectedStudentID + "'" +
+                "		group by a4.student_id, a4.assignment_id) " +
+                " End as homework_score " +
+                " from assignment a) temp";
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                jLabel16.setText(rs.getString("avg_hw_score"));                
+            }
+            
+        //Step3: Load the dropdown jComboBox3
+        query = "select a.assignment_id, a.assignment_name from assignment a " +
+                " where exists " +
+                " (select at.student_id from attempt at " +
+                " where at.assignment_id = a.assignment_id " +
+                " and at.student_id = '" + selectedStudentID + "')";
+        
+        jComboBox3.addItem("--Select Homework");
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            StudentHomework.add(rs.getString("assignment_id"));
+            jComboBox3.addItem(rs.getString("assignment_name"));
+        }
+            
+        }
+        catch (Exception oops) {
+            System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
+
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    //event triggered when homework is selected for particular student on student related stats tab
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        //Step1: Get the selected student and selected homework from the dropdown jComboBox2 and jComboBox3 resp
+        String selectedStudentID = Students.get(jComboBox2.getSelectedIndex());
+        String selectedHWForStudent = StudentHomework.get(jComboBox3.getSelectedIndex());
+        
+        //step2: Get the values of score selection method of homework, HW score, total number of attempts
+        try
+        {            
+        
+        // To find score selection method and hw score according to score selection method.
+        query = "select a.assignment_id, a.assignment_name, " +
+                " CASE " +
+                "	WHEN a.score_selection_method = 1 THEN 'Latest Attempt' " +
+                "	WHEN a.score_selection_method = 2 THEN 'Maximum Score' " +
+                "	WHEN a.score_selection_method = 3 THEN 'Average Score'  " +
+                "END as score_selection_method, " +
+                "CASE " +
+                "	WHEN a.score_selection_method = 1 THEN " +
+                "		(select a1.atmpt_score " +
+                "		from attempt a1 where " +
+                "		a.assignment_id = a1.assignment_id " +
+                "		and a1.atmpt_dt =  " +
+                "		(select max(atmpt_dt) from attempt a2 " +
+                "		where a1.student_id = a2.student_id " +
+                " 		and a1.assignment_id = a2.assignment_id " +
+                "		and a.assignment_id = a2.assignment_id " +
+                "		and a2.student_id = '" + selectedStudentID + "'" +
+                "		group by a2.student_id, a2.assignment_id)) " +
+                
+                "	WHEN a.score_selection_method = 2 THEN " +
+                "		(select max(a3.atmpt_score) from attempt a3 " +
+                "		where a.assignment_id = a3.assignment_id " +
+                "		and a3.student_id = '" + selectedStudentID + "'" +
+                "		group by a3.student_id, a3.assignment_id) " +
+        
+                "	WHEN a.score_selection_method = 3 THEN " +
+                "		(select avg(a4.atmpt_score) from attempt a4 " +
+                "		where a.assignment_id = a4.assignment_id  " +
+                "		and a4.student_id = '" + selectedStudentID + "'" +
+                "		group by a4.student_id, a4.assignment_id) " +
+                " End as homework_score " +
+                " from assignment a where a.assignment_id = '" + selectedHWForStudent + "'";
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            jLabel21.setText(rs.getString("score_selection_method"));
+            jLabel21.setText(rs.getString("homework_score"));
+        }
+        
+        // To find total number of attempts by particular student for particular homework.
+        query = " select at.student_id, at.assignment_id , count(at.atmpt_score) at totalAttempts from attempt at " +
+                " where at.student_id = '" + selectedStudentID + "'" +
+                " and at.assignment_id = '" + selectedHWForStudent + "'" +
+                " group by at.student_id, at.assignment_id ";        
+        rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            jLabel19.setText(rs.getString("totalAttempts"));
+        }
+        }
+        catch (Exception oops) {
+            System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
+
+        }
+    }//GEN-LAST:event_jComboBox3ActionPerformed
+
+    //event triggered when student is selected on student related stats tab
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        jComboBox3.removeAllItems();
+        jLabel21.setText("");
+        jLabel14.setText("");
+        jLabel19.setText("");
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -525,6 +760,8 @@ public class Prof_Report extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

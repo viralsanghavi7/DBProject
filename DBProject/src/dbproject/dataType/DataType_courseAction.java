@@ -14,5 +14,5 @@ import java.util.Date;
 public class DataType_courseAction {
     
     public DataType_user userObj;
-   // public DataType_course courseObj;
+   public DataType_course courseObj;
 }

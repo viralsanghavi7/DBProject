@@ -4,10 +4,20 @@
  * and open the template in the editor.
  */
 package dbproject.Professor;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import dbproject.dataType.*;
 import dbproject.WelcomeScreen;
 import dbproject.dataType.DataType_user;
+import dbproject.dbconnection.dbconnection_dbObject;
 import java.io.*;
+import java.sql.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.text.TableView;
+
 
 /**
  *
@@ -15,19 +25,33 @@ import java.io.*;
  */
 public class Prof_Notification extends javax.swing.JFrame {
 
-    DataType_user userObj;
+    
+    DataType_courseAction courseActionObj;
+    ArrayList<String> notifiationList;
+    
     /**
      * Creates new form MainScreen
      */
     public Prof_Notification() {
         initComponents();
+        
+        //temp code
+        courseActionObj = new DataType_courseAction();
+        courseActionObj.userObj = new DataType_professor();
+        courseActionObj.userObj.user_id = "kogan";
+        GetNotificationsFromDB();
+        
+        
+        
     }
     
     //overloaded constructor
-    public Prof_Notification(DataType_user inputObj) {
+    public Prof_Notification(DataType_courseAction inputObj) {
         initComponents();
-        userObj = inputObj;
         
+        courseActionObj = inputObj;
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(70);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
         GetNotificationsFromDB();
     }
     
@@ -37,7 +61,31 @@ public class Prof_Notification extends javax.swing.JFrame {
     */   
     private void GetNotificationsFromDB()
     {
+        String query = "SELECT notification_id, notification_text from notification where user_id ='" 
+                        + courseActionObj.userObj.user_id + "' and course_id = '"
+                        + courseActionObj.courseObj.course_id + "' and visible = 'T'"; 
         
+        ResultSet rs;
+        Statement stmt;
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        
+        Object[] os = new Object[2];  
+        notifiationList = new ArrayList<String>();
+        DefaultTableModel currentModel = (DefaultTableModel) jTable1.getModel();
+        try {
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                os[0] = false;
+                os[1] = rs.getString("notification_text");                
+                currentModel.addRow(os);
+                notifiationList.add(rs.getString("notification_id"));                
+            }
+            
+        } catch (Exception oops) {
+            System.out.println("Prof_Notification.java:GetNotificationsFromDB() " + oops);
+
+        }
     }
 
     /**
@@ -114,15 +162,28 @@ public class Prof_Notification extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Select", "Notification"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane1.setViewportView(jTable1);
 
         jButton3.setText("Clear Selected Notifications");
@@ -141,13 +202,14 @@ public class Prof_Notification extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(151, 151, 151)
                         .addComponent(jLabel1)
-                        .addGap(0, 157, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton3))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(103, 103, 103)
-                .addComponent(jButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,10 +217,10 @@ public class Prof_Notification extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
-                .addGap(4, 4, 4))
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -169,8 +231,8 @@ public class Prof_Notification extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,7 +259,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     Back button
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -206,14 +268,44 @@ public class Prof_Notification extends javax.swing.JFrame {
     Click on 'Clear Notification' button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        boolean ischecked = false;
+        String query;
+        ArrayList<String> SelectedNotifications = new ArrayList<String>();
         
-        //Step1: Get all the selected notifications
+        //Step1: Get all the selected notifications       
+        for(int nCounter = 0; nCounter < notifiationList.size() ; nCounter ++)
+        {
+            ischecked = (boolean)jTable1.getValueAt(nCounter, 0);
+            if (ischecked)
+                SelectedNotifications.add(notifiationList.get(nCounter));
+        }
+        
+        if (SelectedNotifications.size() > 0)
+        {
+            JOptionPane.showMessageDialog(this, "Please select notification to clear");
+            return;
+        }
         
         //Step2: Update the database to delete all the selected notifications.
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         
+        try
+        {
+            for (String sNotificationID : SelectedNotifications)
+                {
+                    query = "Delete from notification where notification_id ='" + sNotificationID +"'";
+                    db.stmt.executeQuery(query);
+
+                }
+        } catch (Exception oops) {
+            System.out.println("Prof_Notification.java:GetNotificationsFromDB() " + oops);
+
+        }
         
-        //Step3: Navigate the user to Course Actions page.        
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        JOptionPane.showMessageDialog(this, "Notification cleared");
+        
+        //Step3: Navigate the user to Course Actions page.      
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -222,7 +314,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     Home button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ProfHome obj = new ProfHome(userObj);
+        ProfHome obj = new ProfHome(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed

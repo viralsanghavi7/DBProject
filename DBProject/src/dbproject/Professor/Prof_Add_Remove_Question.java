@@ -12,7 +12,6 @@ import dbproject.dbconnection.dbconnection_dbObject;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-
 /**
  *
  * @author Chetan
@@ -347,8 +346,5 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
             System.out.println("ProfAss_Remove_Question.java:load_assignments() " + oops);
 
         }
-    
-        
     }
-    
 }
