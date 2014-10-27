@@ -13,6 +13,10 @@ import dbproject.dataType.*;
 import dbproject.dbconnection.dbconnection_dbObject;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -27,7 +31,12 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     String query;
     String query1;
     String[] assignment_name_array = new String[100];
-    String[] topic_name_array = new String[100];
+    String[] topic_id_array = new String[100];
+    ArrayList<String> allQuestions = new ArrayList<String>();
+    ArrayList<String> selectedQuestions = new ArrayList<String>();
+    ArrayList<String> assignmentId = new ArrayList<String>();
+    ArrayList<Integer> assignmentDifficulty = new ArrayList<Integer>();
+    String AddOrRemove;
     /**
      * 
      * Creates new form MainScreen
@@ -43,6 +52,8 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         userObj = inputObj;
         courseObj = course;
         initComponents();
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(50);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
         load_assignments();
         
         
@@ -70,6 +81,9 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         jComboBox2 = new javax.swing.JComboBox();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -144,7 +158,13 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
 
         jLabel3.setText("Select Topic");
 
-        jButton2.setText("Search Questions");
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Add Questions");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -158,27 +178,66 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
             }
         });
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Add/Remove", "Question"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        jButton5.setText("Remove Questions");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox1, 0, 178, Short.MAX_VALUE)
-                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(187, 187, 187)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jComboBox1, 0, 178, Short.MAX_VALUE)
+                                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(303, 303, 303)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -187,17 +246,21 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addGap(2, 2, 2)
-                            .addComponent(jComboBox2))
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(403, 403, 403)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,8 +271,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,10 +309,44 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //Step 1: Get all the selected questions.
         
-        //Step2 : Store all the questions in choosen_question table.
         
+         boolean ischecked = false;
+         
+         String assignment_id = assignmentId.get(jComboBox1.getSelectedIndex());
+         System.out.println(assignment_id);
+        //Step2 : Store all the questions in choosen_question table.
+        for(int i = 0; i < allQuestions.size(); i ++)
+        {
+            ischecked = (boolean)jTable1.getValueAt(i, 0);
+            if (ischecked){
+                
+                 try {
+                     if(AddOrRemove.equals("add")){
+                    query = "insert into chosen_question (assignment_id,question_id) values"
+                        + "('"+ assignment_id + "','" + allQuestions.get(i) + "')";
+                    rs = stmt.executeQuery(query);
+                     }else if(AddOrRemove.equals("remove")){
+                    query = "delete from chosen_question where assignment_id ='"
+                            + assignment_id +"' and question_id ='"+ allQuestions.get(i) +"'";
+                    rs = stmt.executeQuery(query);
+                     }
+                 }catch (Exception oops) {
+                            System.out .println("ProfHome.java:add_course_list() " + oops);
+                      }
+            }
+        }
+//         for(int i = 0; i < selectedQuestions.size(); i ++)
+//        {
+//            
+//            if (ischecked)
+//                
+//                System.out.println(selectedQuestions.get(i));
+//                
+//        }
+        
+         
         //Step3 : Navigate professor to courseAction page.
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj,courseObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -265,12 +361,32 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        AddOrRemove = "add";
+        load_question("add");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        AddOrRemove = "remove";
+        load_question("remove");
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+       DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -315,6 +431,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel1;
@@ -322,12 +439,14 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 
     private void load_assignments() {
         
-        query = "SELECT assignment_name from assignment where course_id ='" + courseObj.course_id +"'"; 
-        query1= "SELECT topic_name from topic t, course_topic ct where ct.course_id ='"+ courseObj.course_id 
+        query = "SELECT assignment_name,assignment_id,assignment_difficulty_level from assignment where course_id ='" + courseObj.course_id +"'"; 
+        query1= "SELECT topic_name,t.topic_id from topic t, course_topic ct where ct.course_id ='"+ courseObj.course_id 
                 +"' and ct.topic_id = t.topic_id"; 
                 
        // System.out.println(query);
@@ -335,13 +454,18 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 
+                assignmentDifficulty.add(rs.getInt("assignment_difficulty_level"));
+                assignmentId.add(rs.getString("assignment_id"));
                 jComboBox1.addItem(rs.getString("assignment_name"));
             }
             
             rs = stmt.executeQuery(query1);
+            int i=0;
             while (rs.next()) {
                 
+                topic_id_array[i] = rs.getString("topic_id"); 
                 jComboBox2.addItem(rs.getString("topic_name"));
+                i++;
             }
             
         } catch (Exception oops) {
@@ -349,6 +473,47 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
 
         }
     
+        
+    }
+    
+    public void load_question(String type){
+        
+        System.out.println( jComboBox2.getSelectedIndex());
+        
+        if(type.equals("add")){
+        query = "SELECT question_id, ques_text, ques_difficulty_level, ques_hint, topic_id, ques_isdynamic,"
+                + "ques_long_explanation from question  where topic_id = '" + topic_id_array[jComboBox2.getSelectedIndex()]
+                + "' and ques_difficulty_level <= " + assignmentDifficulty.get(jComboBox1.getSelectedIndex()) 
+                + " and question_id not in (select c.question_id from chosen_question c where c.assignment_id ='"
+                + assignmentId.get(jComboBox1.getSelectedIndex())+"')";
+        }else if(type.equals("remove")){
+        query = "SELECT q.question_id, ques_text, ques_difficulty_level, ques_hint, topic_id, ques_isdynamic,"
+                + "ques_long_explanation from question q, chosen_question c where "
+                + "c.assignment_id = '"+ assignmentId.get(jComboBox1.getSelectedIndex())+"' and q.question_id = c.question_id";
+        }
+        Object[] data = new Object[2];
+        
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        model.getDataVector().removeAllElements();
+        System.out.println(query);
+        try {
+            rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                
+                data[0] = false;
+                data[1] = rs.getString("ques_text");
+                allQuestions.add(rs.getString("question_id"));
+                model.addRow(data);
+                
+            }
+            
+            
+        } catch (Exception oops) {
+            System.out.println("ProfAss_Remove_Question.java:load_assignments() " + oops);
+
+         }
+        
         
     }
     
