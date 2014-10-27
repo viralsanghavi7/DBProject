@@ -215,6 +215,8 @@ public class ProfHome extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         jLabel1.setText("Select a course from dropdown:");
         bAddCourseClicked = false;
+        jComboBox1.removeAllItems();
+         init_course_list();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /*
@@ -335,7 +337,7 @@ public class ProfHome extends javax.swing.JFrame {
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         query = "(SELECT C.COURSE_ID, C.COURSE_NAME, C.COURSE_LEVEL, C.COURSE_START_DT, C.COURSE_END_DT,"
                 + "C.NO_OF_STUDENTS_ENROLLED, C.MAX_STUDENTS_ALLOWED FROM COURSE C, TAUGHT_BY T WHERE"
-                + " T.COURSE_ID <> C.COURSE_ID)";
+                + " T.PROF_ID = '"+ userObj.user_id +"' and T.course_id <> C.course_id)";
         System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
@@ -378,7 +380,7 @@ public class ProfHome extends javax.swing.JFrame {
                 + "C.COURSE_END_DT, C.MAX_STUDENTS_ALLOWED, C.NO_OF_STUDENTS_ENROLLED "
                 + " FROM TAUGHT_BY T,COURSE C WHERE T.PROF_ID='"
                 + userObj.user_id + "' AND C.COURSE_ID = T.COURSE_ID)";
-       // System.out.println(query);
+       System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
             while (rs.next()) {
