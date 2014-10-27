@@ -5,10 +5,9 @@
  */
 package dbproject.Professor;
 
-import dbproject.dataType.DataType_courseAction;
+import dbproject.dataType.*;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
-import dbproject.dataType.*;
 import dbproject.dbconnection.dbconnection_dbObject;
 import java.awt.dnd.DragSource;
 import java.sql.ResultSet;

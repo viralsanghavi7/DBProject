@@ -5,11 +5,9 @@
  */
 package dbproject.Professor;
 
-import dbproject.dataType.DataType_courseAction;
+import dbproject.dataType.*;
 import dbproject.Professor.Prof_CourseActions;
 import dbproject.WelcomeScreen;
-import dbproject.dataType.DataType_user;
-import dbproject.dataType.*;
 import dbproject.dbconnection.dbconnection_dbObject;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
 
 /**
  *
