@@ -361,6 +361,12 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         AddOrRemove = "add";
+         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
         load_question("add");
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -375,6 +381,12 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         AddOrRemove = "remove";
+         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
         load_question("remove");
     }//GEN-LAST:event_jButton5ActionPerformed
 
