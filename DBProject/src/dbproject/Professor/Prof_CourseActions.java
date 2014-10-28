@@ -269,7 +269,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of Edit Homework button
     */
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        Prof_Edit_HW obj = new Prof_Edit_HW(userObj);
+        Prof_Edit_HW obj = new Prof_Edit_HW(userObj,course);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed

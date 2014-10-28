@@ -40,26 +40,24 @@ public class Prof_Report extends javax.swing.JFrame {
         Homeworks = new ArrayList<String>();
         Students = new ArrayList<String>();
         StudentHomework = new ArrayList<String>();
-        PopulateComboBoxData();
         db = dbconnection_dbObject.getDBConnection();
         stmt = db.stmt;
+        PopulateComboBoxData();
+        
     }
     
     //Method to populate all the comboboxes in all the tabs available on the UI.
     private void PopulateComboBoxData(){
         
         
-        //Step1: Populate jComboBox1 and jComboBox4 in Homework related stats tab
+        //Step1: Populate jComboBox1 in Homework related stats tab and jComboBox4 in max score students tab
         //Step2: Populate jComboBox2 in Student related stats tab
         String sCouseId = courseActionObj.getCourseID();
-        jComboBox1.addItem("--Select Homework");
-        jComboBox4.addItem("--Select Homework");
-        jComboBox2.addItem("--Select Student");
         try {
             //To load the list of homeworks in select homework dropdown
             query = "SELECT assignment_id, assignment_name from assignment where course_id ='" 
                     + sCouseId +"'"
-                    + " and professor_id = '" + courseActionObj.userObj.user_id;
+                    + " and professor_id = '" + courseActionObj.userObj.user_id +"'";
             
             rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -70,17 +68,14 @@ public class Prof_Report extends javax.swing.JFrame {
             
             
             //To load the list of students in select student dropdown.
-            query = "select student_id, student_name from student s, enrollment e" +
-                    "where s.student_id = e.student_id and " +
-                    "s.course_id = '" + sCouseId +"'";
+            query = "select db.user_id, db.user_name from dbuser db, enrollment e " +
+                    "where db.user_id = e.student_id and " +
+                    "e.course_id = '" + sCouseId +"'";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
-                Students.add(rs.getString("student_id"));
-                jComboBox2.addItem(rs.getString("student_name"));
+                Students.add(rs.getString("user_id"));
+                jComboBox2.addItem(rs.getString("user_name"));
             }
-            
-            
-            //Step3: Populate the table in Max score student tab
             
         } catch (Exception oops) {
             System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
@@ -221,23 +216,23 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel3.setText("Maximum score:");
 
-        jLabel4.setText("max_score_value");
+        jLabel4.setText("select homework");
 
         jLabel5.setText("Minimum score:");
 
-        jLabel6.setText("min_score_value");
+        jLabel6.setText("select homework");
 
         jLabel7.setText("Average number of attempts:");
 
-        jLabel8.setText("avg_no_atmpts");
+        jLabel8.setText("select homework");
 
         jLabel9.setText("List of students who did not submit this HW:");
 
         jScrollPane1.setViewportView(jList1);
 
-        jLabel10.setText("Students who scored first max on first attempt:");
+        jLabel10.setText("Student who scored first max on first attempt:");
 
-        jLabel11.setText("student_name");
+        jLabel11.setText("select homework");
 
         javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
@@ -547,7 +542,7 @@ public class Prof_Report extends javax.swing.JFrame {
         //Step1: Get the selected homework from the dropdown jComboBox1
         String selectedHW = Homeworks.get(jComboBox1.getSelectedIndex());
         
-        //Step2: Get the corresponding data from database for that homework
+        //Step2: Get the corresponding data from database for that homework and populate on UI
         try
         {
             //For max and min score of homework
@@ -570,7 +565,7 @@ public class Prof_Report extends javax.swing.JFrame {
             //For student name who scored max first for particular homework
             query = "select user_name from dbuser where user_id = "
                     + "(select student_id from (select student_id from attempt where assignment_id = '"
-                    + selectedHW + "' order by atmpt_score desc, atmpt dt asc) where rownum = 1)";
+                    + selectedHW + "' order by atmpt_score desc, atmpt_dt asc) where rownum = 1)";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 jLabel11.setText(rs.getString("user_name"));
@@ -592,9 +587,7 @@ public class Prof_Report extends javax.swing.JFrame {
             
         } catch (Exception oops) {
             System.out.println("Prof_Report.java:jButton2ActionPerformed() " + oops);
-
         }
-        //Step3: Populate the data on the UI.
     }//GEN-LAST:event_jButton2ActionPerformed
 
     //View button in Student related stats tab clicked
@@ -647,7 +640,6 @@ public class Prof_Report extends javax.swing.JFrame {
                 " where at.assignment_id = a.assignment_id " +
                 " and at.student_id = '" + selectedStudentID + "')";
         
-        jComboBox3.addItem("--Select Homework");
         rs = stmt.executeQuery(query);
         while (rs.next()) {
             StudentHomework.add(rs.getString("assignment_id"));
@@ -711,7 +703,7 @@ public class Prof_Report extends javax.swing.JFrame {
         }
         
         // To find total number of attempts by particular student for particular homework.
-        query = " select at.student_id, at.assignment_id , count(at.atmpt_score) at totalAttempts from attempt at " +
+        query = " select at.student_id, at.assignment_id , count(at.atmpt_dt) at totalAttempts from attempt at " +
                 " where at.student_id = '" + selectedStudentID + "'" +
                 " and at.assignment_id = '" + selectedHWForStudent + "'" +
                 " group by at.student_id, at.assignment_id ";        
@@ -719,19 +711,19 @@ public class Prof_Report extends javax.swing.JFrame {
         while (rs.next()) {
             jLabel19.setText(rs.getString("totalAttempts"));
         }
+        
         }
         catch (Exception oops) {
             System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
-
         }
     }//GEN-LAST:event_jComboBox3ActionPerformed
 
     //event triggered when student is selected on student related stats tab
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         jComboBox3.removeAllItems();
-        jLabel21.setText("");
-        jLabel14.setText("");
-        jLabel19.setText("");
+        jLabel21.setText(" ");
+        jLabel14.setText(" ");
+        jLabel19.setText(" ");
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     //View button in Max score students stats tab clicked
@@ -754,7 +746,7 @@ public class Prof_Report extends javax.swing.JFrame {
             query = "select a1.student_id, db.user_name, a1.assignment_id, a1.atmpt_dt, a1.atmpt_score " +
                     " from attempt a1, dbuser db where " +
                     " a1.student_id = db.user_id " +
-                    " a1.assignment_id = '" + selectedHW + "'" +
+                    " and a1.assignment_id = '" + selectedHW + "'" +
                     " and a1.atmpt_dt =  " +
                     " (select min(atmpt_dt) from attempt a2 " +
                     " where a1.student_id = a2.student_id " +

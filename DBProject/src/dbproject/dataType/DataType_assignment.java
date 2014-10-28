@@ -24,6 +24,10 @@ public class DataType_assignment {
     public Integer score_selection_method;
     public String course_id;
     public String professor_id;
+    public int number_of_questions;
+    
+    public DataType_assignment()
+    {}
 
     public String getAssignment_id() {
         return assignment_id;
