@@ -4,28 +4,113 @@
  * and open the template in the editor.
  */
 package dbproject.Student;
-import dbproject.dataType.*;
+import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.*;
 import dbproject.WelcomeScreen;
+import dbproject.dataType.DataType_notification;
 import java.io.*;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.awt.Color;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Date;
+import java.util.Vector;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.jdesktop.swingx.calendar.DateUtils;
 /**
  *
  * @author Chetan
  */
 public class Student_Notification extends javax.swing.JFrame {
-
+    //Attributes
+    private Statement stmt = null;
+    private ResultSet rs = null;
     DataType_courseAction courseActionObj;
+    private DataType_notification[] tableOfNotification;
     /**
      * Creates new form MainScreen
      */
     public Student_Notification() {
         initComponents();
+        //creation of the db connection
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        jLabel1.setText(courseActionObj.getCourseID());
+        System.out.println("DEFAULT VIEW");
+    
     }
     
     //Overloaded constrctor
     public Student_Notification(DataType_courseAction inputObj) {
         initComponents();
-        courseActionObj = inputObj;   
+        //definitions of the title of the Jtable1
+        String[] titleJTable1 = {"Course", "Text"};
+        
+        //creation of the db connection
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+    
+        //Put the name of the class in the display
+        courseActionObj = inputObj;
+        jLabel1.setText(courseActionObj.getCourseID());
+     
+        
+        //Get the userID
+        String userID = courseActionObj.userObj.user_id;
+        
+        //Creates the notifications
+        sendNotification();
+        //Get the number of notification to display
+        String query = "SELECT count(n.notification_id) "
+                        +"FROM notificationTest n "
+                        +"WHERE n.user_id = '" + userID + "' AND n.visible = 'T'";
+        
+        System.out.println("query to count the number of visible notifications of the user "+userID+" : "+ query);
+        try {
+            rs = stmt.executeQuery(query);
+            
+            //record the number of visible notifications in the variable numberOfNotifications
+            rs.next();
+            int numberOfNotifications = rs.getInt("count(n.notification_id)");
+            
+            //creation of the table TableOfNotifications
+            tableOfNotification = new DataType_notification[numberOfNotifications];
+            
+            //get all the notificationID of the visible notifications of the user
+            query = "SELECT n.notification_id "
+                        +"FROM notificationTest n "
+                        +"WHERE n.user_id = '" + userID + "' AND n.visible = 'T'";
+        
+            System.out.println("query to get notification of the user "+userID+" : "+ query);
+            try {
+                rs = stmt.executeQuery(query);
+                int cpt = 0;
+                Object[][] contentJTable1 = new Object[numberOfNotifications][2];//table of content that is displayed in JTable1
+                
+                while (rs.next()) {//treatement of each tuple - creation of a datatype_notification and recording in TableOfNotification
+                        String notificationID = rs.getString("notification_id");
+                        tableOfNotification[cpt] = new DataType_notification(notificationID);
+                        contentJTable1[cpt][0] = tableOfNotification[cpt].getCourse_id();
+                        contentJTable1[cpt][1] = tableOfNotification[cpt].getNotification_text();
+                        cpt++;
+                }
+                jTable1.setModel(new javax.swing.table.DefaultTableModel(contentJTable1,titleJTable1));
+            }
+            catch (Exception oops) {
+                System.out.println("WARNING - Student_Notification - Student_Notification(DataType_courseAction inputObj) - get all notifications of the user : "+ oops); 
+            }
+        
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - Student_Notification - Student_Notification(DataType_courseAction inputObj) - count number of notifications of the user : "+ oops); 
+        }
+
+       //TODO test set functions of notifications 
+        
+        
+        
    //     jLabel1.setText(courseActionObj.courseObj.course_name);
     }
 
@@ -111,13 +196,10 @@ public class Student_Notification extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Course", "Text"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -138,15 +220,18 @@ public class Student_Notification extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(104, 104, 104)
-                        .addComponent(jButton3)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(104, 104, 104)
+                                .addComponent(jButton3))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(140, 140, 140)
+                                .addComponent(jLabel2)))
                         .addGap(0, 100, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(140, 140, 140)
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -196,7 +281,7 @@ public class Student_Notification extends javax.swing.JFrame {
     Back button
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        Student_CourseActions obj = new Student_CourseActions();
+        Student_CourseActions obj = new Student_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -205,20 +290,66 @@ public class Student_Notification extends javax.swing.JFrame {
     Click on 'Clear Notification' button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Student_CourseActions obj = new Student_CourseActions();
+        //Make the visibility of all the notification displayed as 'F'
+        for(int i =0; i< tableOfNotification.length ; i++){
+            tableOfNotification[i].setVisible("F");
+        }
+        //go to the Home Windows
+        Student_CourseActions obj = new Student_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /*
     Home Button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Student_Home obj = new Student_Home();
+        Student_Home obj = new Student_Home(courseActionObj.userObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
+    
+    //Function that check if notifications have to be send
+    public void sendNotification(){
+        //get the current date from the database
+        Date currentDate;
+        String query = "SELECT SYSDATE FROM DUAL";
+        System.out.println("query to get date from server : "+query);
+        
+        try {
+            rs = stmt.executeQuery(query);
+            rs.next();
+            currentDate = rs.getDate("sysdate");
+            //Date newDate = DateUtils.addDays(currentDat, WIDTH)
+            
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - Student_Home - sendNotification() - get current date : "+ oops); 
+        }
+        
+        //get all the data related to the homeworks in the course
+        query = "SELECT * from assignment a where a.course_id = '"+courseActionObj.getCourseID()+"'";
+        System.out.println("query get all the homeworks in the course "+courseActionObj.getCourseID()+" : "+query);
+        
+        
+        /*
+        try {
+            rs = stmt.executeQuery(query);
+            
+            while(rs.next()){//treat each homework
+                
+            }
+            
+
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - Student_Notification - sendNotification() -get all data related to the homeworks in the class "+courseActionObj.getCourseID()+" : "+ oops); 
+        }
+        */
+    }
     /**
      * @param args the command line arguments
      */

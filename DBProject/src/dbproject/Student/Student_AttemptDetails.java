@@ -15,13 +15,14 @@ import dbproject.WelcomeScreen;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 
+
 /**
  *
  * @author Chetan
  */
 public class Student_AttemptDetails extends javax.swing.JFrame {
 
-    DataType_courseAction courseActionObj;
+    private DataType_attempt attempt;
     /**
      * Creates new form MainScreen
      */
@@ -31,9 +32,9 @@ public class Student_AttemptDetails extends javax.swing.JFrame {
     }
     
     //Overloaded constrctor
-    public Student_AttemptDetails(DataType_courseAction inputObj) {
+    public Student_AttemptDetails(DataType_attempt inputObj) {
         initComponents();
-        courseActionObj = inputObj;
+        attempt = inputObj;
         AddHomeworkAsRadioButtons();        
      //   jLabel1.setText(courseActionObj.courseObj.course_name);
     }

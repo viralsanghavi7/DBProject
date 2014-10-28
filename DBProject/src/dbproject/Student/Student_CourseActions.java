@@ -13,25 +13,40 @@ import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
 import dbproject.dataType.*;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  *
  * @author Chetan
  */
 public class Student_CourseActions extends javax.swing.JFrame {
-
+    //Attributes
+    private Statement stmt = null;
+    private ResultSet rs = null;
     DataType_courseAction courseActionObj;
+    
     /**
      * Creates new form MainScreen
      */
     public Student_CourseActions() {
         initComponents();
+        //creation of the db connection
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+    
     }
     
     //Overloaded constrctor
     public Student_CourseActions(DataType_courseAction inputObj) {
         initComponents();
+        //creation of the db connection
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+    
         courseActionObj = inputObj;
+        jLabel1.setText(courseActionObj.getCourseID());
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
     }
 
