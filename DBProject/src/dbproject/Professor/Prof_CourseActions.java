@@ -287,9 +287,8 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of View Notifications button
     */
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        DataType_courseAction courseActionObj = new DataType_courseAction();
+        DataType_courseAction courseActionObj = new DataType_courseAction(course.course_id);
         courseActionObj.userObj = userObj;
-        courseActionObj.courseObj = course;
         Prof_Notification obj = new Prof_Notification(courseActionObj);
         obj.setVisible(true);
         this.dispose();
@@ -299,9 +298,8 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of View Notifications button
     */
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        DataType_courseAction courseActionObj = new DataType_courseAction();
+        DataType_courseAction courseActionObj = new DataType_courseAction(course.course_id);
         courseActionObj.userObj = userObj;
-        courseActionObj.courseObj = course;
         Prof_Report obj = new Prof_Report(courseActionObj);
         obj.setVisible(true);
         this.dispose();

@@ -11,8 +11,10 @@ import dbproject.WelcomeScreen;
 import java.io.*;
 import dbproject.dataType.*;
 import dbproject.dbconnection.dbconnection_dbObject;
+import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Date;
 
 /**
  *
@@ -59,8 +61,10 @@ public class Student_Home extends javax.swing.JFrame {
         jTextField1.setVisible(false);
         jButton5.setVisible(false);
         
-        //Enrollment message
-        jLabel3.setVisible(false);        
+        //Welcome message
+        jLabel3.setVisible(true);
+        jLabel3.setText("Welcome, "+userObj.user_name);
+        jLabel3.setForeground(Color.black);
     }
 
     /**
@@ -277,22 +281,23 @@ public class Student_Home extends javax.swing.JFrame {
                         +"WHERE e.student_id = '" + userObj.user_id + "' AND e.course_id = c.course_id";
         
         System.out.println("query to get student courses : "+ query);
-        
         try {
             rs = stmt.executeQuery(query);
         
-            if (!rs.next()) {//the user has courses
-                while (rs.next()) {//treatement of each tuple
-		    String courseName = rs.getString("e.course_id");
-		    System.out.println(courseName);
-                    jComboBox1.addItem(courseName);//add the course in the ComboBox
-		}
+            while (rs.next()) {//treatement of each tuple
+		    String courseID = rs.getString("course_id");
+		    System.out.println("course: " +courseID);
+                    jComboBox1.addItem(courseID);//add the course in the ComboBox
+		
             }
 
         }
         catch (Exception oops) {
             System.out.println("WARNING - Student_Home - setComboBoxCourseFromDB - get all courses of the user : "+ oops); 
         }
+        //PPS 22_230For test - because DB not ok - TODO : remove it when db ok
+        //jComboBox1.addItem("CSC440");
+        //PPE 22_230
         
     }
     /*
@@ -302,17 +307,18 @@ public class Student_Home extends javax.swing.JFrame {
         
    //     DataType_course courseObj = new DataType_course();
         //Get the information about the course and populate courseObj
-        
-        DataType_courseAction courseActionObj = new DataType_courseAction();
-   //         courseActionObj.courseObj = courseObj;
-            courseActionObj.userObj = userObj;
-        
+        String courseIDSelected = jComboBox1.getSelectedItem().toString();//get the courseID of the course in the comboBox
+        DataType_courseAction courseActionObj = new DataType_courseAction(courseIDSelected);
+//         courseActionObj.courseObj = courseObj;
+        courseActionObj.userObj = userObj;
+
         String subjectName = jComboBox1.getSelectedItem().toString();
         
         Student_CourseActions obj = new Student_CourseActions(courseActionObj);
         obj.setVisible(true);
         
         this.dispose();
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /*
@@ -329,20 +335,131 @@ public class Student_Home extends javax.swing.JFrame {
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         //Step1: 
+        //Check if the token is valid
+        String token = jTextField1.getText();
+        String query = "SELECT * from token t where t.token_id = '"+token+"'";
+        System.out.println("query to check existance of the token "+token+" : "+query);
         
-        //Warning message
-        jLabel3.setVisible(true);
-        jLabel3.setText("Course Added Successfully");
+        try {
+            rs = stmt.executeQuery(query);
         
-        //Bloc for Select Course
-        jLabel1.setVisible(true);
-        jButton3.setVisible(true);
-        jComboBox1.setVisible(true);
+            if (!rs.next()) {//rs return nothing - the token doesn't exist
+                System.out.println("The Token "+token+" is not recorded in our Database.");
+                //Warning message
+                jLabel3.setVisible(true);
+                jLabel3.setText("This token doesn't exist.");
+                jLabel3.setForeground(Color.red);
+                
+            }
+            else{ 
+                //Add student in the course
+                //get the course_id and date of expirancy of the token of the course related to the token
+                String courseID = rs.getString("course_id");
+                Date tokenDate = rs.getDate("token_exp_dt");
+                
+                //check if the expiration date of the token hasn't been crossed
+                query = "SELECT SYSDATE FROM DUAL";
+                System.out.println("query to get date from server : "+query);
+
+                try {
+                    rs = stmt.executeQuery(query);
+                    rs.next();
+                    Date currentDate = rs.getDate("sysdate");
+                    if (currentDate.before(tokenDate) ){//token still valid
+                        //check if the student is not already enrolled in this class
+                        query = "select * from enrollment e where e.student_id = '"+userObj.user_id+"' and e.course_id ='"+courseID+"'";
+                        System.out.println("query to check if student already enrolled in clas : "+query);
+
+                        try {
+                            rs = stmt.executeQuery(query);
+
+                            if (!rs.next()) {//the query returns nothing - the student is not already enrolled in this class 
+                                DataType_courseAction dataCourse = new DataType_courseAction(courseID);//creation of a dataType related to the course
+
+                                //Check if there is enough place inside the class to add this student
+                                int noOfStudentEnrolled = dataCourse.getNoOfSudentEnrolled();
+                                int maxStudentAllowed = dataCourse.getMaxStudentAllowed();
+
+                                if (noOfStudentEnrolled + 1 <= maxStudentAllowed) {//The student can be added to the class
+                                    //Increment the number of student inrolled in the table course
+                                    query = "UPDATE course set no_of_students_enrolled = "+(noOfStudentEnrolled + 1)+" where  course_id = '"+courseID+"'";
+                                    System.out.println("query to update value of students enrolled : "+query);
+
+                                    try {
+                                        rs = stmt.executeQuery(query);
+                                        //Add the class and the student in the table enrollment
+                                        query = "INSERT INTO enrollment(student_id, course_id) VALUES ('"+userObj.user_id+"', '"+courseID+"')";
+                                        System.out.println("query to insert in enrollment table the couple studentID and class : "+query);
+
+                                        try {
+                                            rs = stmt.executeQuery(query);
+                                            System.out.println("enrollment OK");
+
+                                            //Warning message
+                                            jLabel3.setVisible(true);
+                                            jLabel3.setText("Course Added Successfully");
+                                            jLabel3.setForeground(Color.green);
+
+                                            //Bloc for Select Course
+                                            jLabel1.setVisible(true);
+                                            jButton3.setVisible(true);
+                                            jComboBox1.setVisible(true);
+
+                                            //Bloc for token
+                                            jLabel2.setVisible(false);
+                                            jTextField1.setVisible(false);
+                                            jButton5.setVisible(false);
+
+                                        }
+                                        catch (Exception oops) {
+                                            System.out.println("WARNING - Student_Home - jButton5ActionPerformed - insert data in enrollment ("+courseID+", "+userObj.user_id+") : "+ oops); 
+                                        }
+                                    }
+                                    catch (Exception oops) {
+                                        System.out.println("WARNING - Student_Home - jButton5ActionPerformed - update value of no_of_student_enrolled of course_id"+courseID+" : "+ oops); 
+                                    }
+
+                                } else {//not enought room to add an another student
+                                    System.out.println("No enought room for an other student. Adding is impossible.");
+                                    //Warning message
+                                    jLabel3.setVisible(true);
+                                    jLabel3.setText("enrollment impossible. No free seat.");
+                                    jLabel3.setForeground(Color.red);
+                                }
+                            }
+                            else{//student is already enrolled in this class
+                                System.out.println("The course with the course_id "+courseID+" is already in the list of the user.");
+                                //Warning message
+                                jLabel3.setVisible(true);
+                                jLabel3.setText("Already enrolled in.");
+                                jLabel3.setForeground(Color.red);
+                            }
+
+                        }
+                        catch (Exception oops) {
+                            System.out.println("WARNING - Student_Home - jButton5ActionPerformed - get data related to the course_id"+courseID+" : "+ oops); 
+                        }
+                    }
+                    else{//the token is not valid
+                        System.out.println("The token "+token+" is no more valid - date expired.");
+                        //Warning message
+                        jLabel3.setVisible(true);
+                        jLabel3.setText("This token is expired.");
+                        jLabel3.setForeground(Color.red);
+                    }
+
+                }
+                catch (Exception oops) {
+                    System.out.println("WARNING - Student_Home - jButton5ActionPerformed - get current date : "+ oops); 
+                }
+                
+            }
+
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - Student_Home - jButton5ActionPerformed - get data related to the token_id "+token+" : "+ oops); 
+        }
         
-        //Bloc for token
-        jLabel2.setVisible(false);
-        jTextField1.setVisible(false);
-        jButton5.setVisible(false);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed

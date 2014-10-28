@@ -361,9 +361,9 @@ public class ProfHome extends javax.swing.JFrame {
     }
 
     public void go_to_prof_action(int index) {
-        DataType_courseAction courseActionObj = new DataType_courseAction();
+        //DataType_courseAction courseActionObj = new DataType_courseAction();
         //     courseActionObj.courseObj = courseObj;
-        courseActionObj.userObj = userObj;
+        //courseActionObj.userObj = userObj;
         course_array[index] = temp_course;
         System.out.println(course_array[index]);
         Prof_CourseActions obj = new Prof_CourseActions(userObj,course_array[index]);

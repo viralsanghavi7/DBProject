@@ -12,6 +12,13 @@ import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
+import dbproject.dataType.*;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.*;
+import java.util.*;
+
 
 /**
  *
@@ -19,21 +26,45 @@ import dbproject.WelcomeScreen;
  */
 public class Student_ViewPastSubmissions extends javax.swing.JFrame {
 
-     DataType_courseAction courseActionObj;
+    private ResultSet rs = null; 
+    DataType_courseAction courseActionObj;
+//    private DataType_attempt attempt;
+    private ArrayList<DataType_attempt> list;
     /**
      * Creates new form MainScreen
      */
     public Student_ViewPastSubmissions() {
         initComponents();
         jButton2.setVisible(false);
-        jButton3.setVisible(false);
-        jScrollPane1.setVisible(true);
+        
         
     }
     
     //Overloaded constrctor
-    public Student_ViewPastSubmissions(DataType_courseAction inputObj) {
+    public Student_ViewPastSubmissions(DataType_courseAction inputObj){
         initComponents();
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        Statement stmt = db.stmt;
+        String s = "select a.atmpt_dt,a.student_id,a.assignment_id,a.atmpt_score,s.end_dt from attempt a,assignment s where a.assignment_id=s.assignment_id and a.student_id='"+inputObj.getUserObj().getUser_id()+"'";
+        list = new ArrayList<DataType_attempt>();       
+        try{
+        rs = stmt.executeQuery(s);
+        while(rs.next()){
+            Date atmpt_dt = rs.getDate(1);
+            String student_id = rs.getString(2);
+            String assignment_id = rs.getString(3);
+            int atmpt_score = rs.getInt(4);
+            Date due_dt = rs.getDate(5);
+            DataType_attempt attempt = new DataType_attempt(atmpt_dt,atmpt_score,student_id,assignment_id,due_dt);
+            list.add(attempt);
+        }
+        }catch(Exception o){}
+        Iterator<DataType_attempt> j = list.iterator();
+        String[] data = new String[list.size()];
+        for(int i=0;i<list.size();i++)
+            data[i]= j.next().getAssignment_id();               
+        jList1.removeAll();
+        jList1.setListData(data);
         courseActionObj = inputObj;
         //jLabel1.setText(courseActionObj.courseObj.course_name);
     }
@@ -58,8 +89,9 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,13 +128,13 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                        .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -126,14 +158,14 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
 
         jLabel2.setText("Select the appropriate category:");
 
-        jButton4.setText("Homework Past Due Date");
+        jButton4.setText("Past Due ");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
-        jButton5.setText("Homework Within Due Date");
+        jButton5.setText("Within Due ");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -147,10 +179,17 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Choose Category Again");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList1);
+
+        jButton7.setText("All");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jButton7ActionPerformed(evt);
             }
         });
 
@@ -158,12 +197,6 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,11 +205,17 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(jButton5)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 62, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(121, 121, 121)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,16 +223,15 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5)
+                    .addComponent(jButton7))
+                .addGap(7, 7, 7)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -244,12 +282,16 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         jLabel2.setText("Select Attempt:");
         
-        jButton4.setVisible(false);
-        jButton5.setVisible(false);
-        jButton2.setVisible(true);
-        jButton3.setVisible(true);
         
-        jScrollPane1.setVisible(true);
+        Iterator<DataType_attempt> j = list.iterator();
+        Vector<String> data = new Vector<String>();
+        for(int i=0;i<list.size();i++){
+            DataType_attempt attempt = j.next();
+            if(attempt.getDue_dt().before(new Date()))               
+                data.add(attempt.assignment_id);
+        }
+        jList1.removeAll();
+        jList1.setListData(data);
         
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -258,34 +300,31 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         jLabel2.setText("Select Attempt:");
+        Iterator<DataType_attempt> j = list.iterator();
+        Vector<String> data = new Vector<String>();
+        for(int i=0;i<list.size();i++){
+            DataType_attempt attempt = j.next();
+            if(attempt.getDue_dt().after(new Date()))               
+                data.add(attempt.assignment_id);
+        }
+        jList1.removeAll();
+        jList1.setListData(data);;
         
-        jButton4.setVisible(false);
-        jButton5.setVisible(false);
-        jButton2.setVisible(true);
-        jButton3.setVisible(true);
-        
-        jScrollPane1.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
-
-    /*
-    When Choose Category Again button clicked
-    */
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        jLabel2.setText("Select Appropriate Category:");
-        
-        jButton4.setVisible(true);
-        jButton5.setVisible(true);
-        jButton2.setVisible(false);
-        jButton3.setVisible(false);
-        
-        jScrollPane1.setVisible(false);
-    }//GEN-LAST:event_jButton3ActionPerformed
 
     /*
     When View Attempt button clicked
     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Student_AttemptDetails obj = new Student_AttemptDetails(courseActionObj);
+        String assignment_id = jList1.getSelectedValue().toString();
+        DataType_attempt attempt = null;
+        Iterator<DataType_attempt> j = list.iterator();
+        for(int i=0;i<list.size();i++){
+             attempt = j.next();
+             if(attempt.getAssignment_id().equals(assignment_id))
+                 break;
+        }
+        Student_AttemptDetails obj = new Student_AttemptDetails(attempt);
         obj.setVisible(true);
         
         this.dispose();
@@ -300,58 +339,70 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        Iterator<DataType_attempt> j = list.iterator();
+        String[] data = new String[list.size()];
+        for(int i=0;i<list.size();i++)
+            data[i]= j.next().getAssignment_id();               
+        jList1.removeAll();
+        jList1.setListData(data);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Student_ViewPastSubmissions().setVisible(true);
-                
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(Student_ViewPastSubmissions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        //</editor-fold>
+//        //</editor-fold>
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new Student_ViewPastSubmissions().setVisible(true);
+//                
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
 }

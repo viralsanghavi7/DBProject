@@ -5,15 +5,23 @@
  */
 package dbproject.Student;
 
-import dbproject.dataType.*;
+import dbproject.dataType.DataType_courseAction;
 import dbproject.Professor.*;
 import dbproject.Professor.Prof_Edit_HW;
 import dbproject.Professor.Prof_Notification;
 import dbproject.Professor.Prof_Report;
 import dbproject.Professor.Prof_View_HW;
 import dbproject.WelcomeScreen;
+import dbproject.dataType.DataType_assignment;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  *
@@ -22,6 +30,9 @@ import javax.swing.JButton;
 public class Student_AttemptHW extends javax.swing.JFrame {
 
     DataType_courseAction courseActionObj;
+    private ArrayList<DataType_assignment> list;
+    private Statement stmt = null;
+    private ResultSet rs = null; 
     /**
      * Creates new form MainScreen
      */
@@ -36,6 +47,38 @@ public class Student_AttemptHW extends javax.swing.JFrame {
         courseActionObj = inputObj;
         AddHomeworkAsRadioButtons();        
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        Statement stmt = db.stmt;
+        String s = "select * from assignment where course_id='"+inputObj.getCourseID()+"'";
+        list = new ArrayList<DataType_assignment>();       
+        try{
+        rs = stmt.executeQuery(s);
+        while(rs.next()){
+            String assignment_id = rs.getString(1);
+            String assignment_name = rs.getString(2);
+            int assignment_difficulty = rs.getInt(3);
+            int number_of_retries = rs.getInt(4);
+            int penalty_points = rs.getInt(6);
+            int correct_points =rs.getInt(7);
+            Date start_dt = rs.getDate(8);
+            Date end_dt = rs.getDate(9);
+            int score_selection_method = rs.getInt(10);
+            String course_id = rs.getString(11);
+            String professor_id = rs.getString(12);
+            DataType_assignment assignment = new DataType_assignment(assignment_id,assignment_name,assignment_difficulty,number_of_retries,penalty_points,correct_points,start_dt,end_dt,score_selection_method,course_id,professor_id);
+            list.add(assignment);
+        }
+        }catch(Exception o){}
+        Iterator<DataType_assignment> j = list.iterator();
+        Vector<String> data = new Vector<String>();
+        for(int i=0;i<list.size();i++){
+            DataType_assignment assignment = j.next();
+            if(assignment.getEnd_dt().after(new Date()))               
+                data.add(assignment.getAssignment_name());
+        }
+        jList1.removeAll();
+        jList1.setListData(data);
+        courseActionObj = inputObj;
     }
     
     private void AddHomeworkAsRadioButtons()
@@ -67,6 +110,7 @@ public class Student_AttemptHW extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -104,13 +148,13 @@ public class Student_AttemptHW extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+                        .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -131,6 +175,13 @@ public class Student_AttemptHW extends javax.swing.JFrame {
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList1);
 
         jButton2.setText("Start Attempt");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -209,8 +260,15 @@ public class Student_AttemptHW extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         ButtonModel selectedButton =  buttonGroup1.getSelection();
         
-        
-        Student_StartAttempt obj = new Student_StartAttempt();
+        String assignment_name = jList1.getSelectedValue().toString();
+        DataType_assignment assignment = null;
+        Iterator<DataType_assignment> i = list.iterator();
+        for(int j=0;j<list.size();j++){
+            assignment = i.next();
+            if(assignment.getAssignment_name().equals(assignment_name))
+                break;
+        }
+        Student_StartAttempt obj = new Student_StartAttempt(assignment);     
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -270,6 +328,7 @@ public class Student_AttemptHW extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

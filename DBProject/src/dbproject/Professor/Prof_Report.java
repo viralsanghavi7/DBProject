@@ -51,13 +51,13 @@ public class Prof_Report extends javax.swing.JFrame {
         
         //Step1: Populate jComboBox1 in Homework related stats tab
         //Step2: Populate jComboBox2 in Student related stats tab
-        
+        String sCouseId = courseActionObj.getCourseID();
         jComboBox1.addItem("--Select Homework");
         jComboBox2.addItem("--Select Student");
         try {
             //To load the list of homeworks in select homework dropdown
             query = "SELECT assignment_id, assignment_name from assignment where course_id ='" 
-                    + courseActionObj.courseObj.course_id +"'"
+                    + sCouseId +"'"
                     + " and professor_id = '" + courseActionObj.userObj.user_id;
             
             rs = stmt.executeQuery(query);
@@ -70,7 +70,7 @@ public class Prof_Report extends javax.swing.JFrame {
             //To load the list of students in select student dropdown.
             query = "select student_id, student_name from student s, enrollment e" +
                     "where s.student_id = e.student_id and " +
-                    "s.course_id = '" + courseActionObj.courseObj.course_id +"'";
+                    "s.course_id = '" + sCouseId +"'";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 Students.add(rs.getString("student_id"));
@@ -400,11 +400,11 @@ public class Prof_Report extends javax.swing.JFrame {
                 .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(jLabel17))
-                .addGap(18, 18, 18)
+                .addGap(33, 33, 33)
                 .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
                     .addComponent(jLabel19))
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Student wise statistics", jInternalFrame2);
@@ -449,7 +449,7 @@ public class Prof_Report extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -493,7 +493,7 @@ public class Prof_Report extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj, courseActionObj.courseObj);
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj, courseActionObj.getCourseObj());
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -544,7 +544,7 @@ public class Prof_Report extends javax.swing.JFrame {
             //For finding the list of students who did not attempt particular homework
             query = "select e.student_id, db.user_name from dbuser db, enrollment e "
                     + " where db.user_id = e.student_id and e.course_id = '" 
-                    + courseActionObj.courseObj.course_id + "'"
+                    + courseActionObj.getCourseID() + "'"
                     + " minus (select distinct at.student_id, db.user_name from attempt at, "
                     + " dbuser db where assignment_id = '" + selectedHW + "')";
             

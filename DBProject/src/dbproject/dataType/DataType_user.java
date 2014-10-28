@@ -28,6 +28,39 @@ public class DataType_user {
     
     //For Student
     public String student_type;
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public String getUser_password() {
+        return user_password;
+    }
+
+    public String getUser_type() {
+        return user_type;
+    }
+
+    public String getCourse_id() {
+        return course_id;
+    }
+
+    public Date getValid_till() {
+        return valid_till;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public String getStudent_type() {
+        return student_type;
+    }
+    
 }
 
 /*

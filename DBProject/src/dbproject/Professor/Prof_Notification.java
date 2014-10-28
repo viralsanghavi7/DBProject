@@ -35,11 +35,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     public Prof_Notification() {
         initComponents();
         
-        //temp code
-        courseActionObj = new DataType_courseAction();
-        courseActionObj.userObj = new DataType_professor();
-        courseActionObj.userObj.user_id = "kogan";
-        GetNotificationsFromDB();
+        
         
         
         
@@ -63,7 +59,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     {
         String query = "SELECT notification_id, notification_text from notification where user_id ='" 
                         + courseActionObj.userObj.user_id + "' and course_id = '"
-                        + courseActionObj.courseObj.course_id + "' and visible = 'T'"; 
+                        + courseActionObj.getCourseID() + "' and visible = 'T'"; 
         
         ResultSet rs;
         Statement stmt;
@@ -268,6 +264,12 @@ public class Prof_Notification extends javax.swing.JFrame {
     Click on 'Clear Notification' button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        if (notifiationList.size() == 0)
+        {
+            JOptionPane.showMessageDialog(this, "No notifications to clear.");
+            return;
+        }
+        
         boolean ischecked = false;
         String query;
         ArrayList<String> SelectedNotifications = new ArrayList<String>();
@@ -293,7 +295,7 @@ public class Prof_Notification extends javax.swing.JFrame {
         {
             for (String sNotificationID : SelectedNotifications)
                 {
-                    query = "Delete from notification where notification_id ='" + sNotificationID +"'";
+                    query = "Update notification set visible = 'F' where notification_id ='" + sNotificationID +"'";
                     db.stmt.executeQuery(query);
 
                 }
@@ -305,7 +307,7 @@ public class Prof_Notification extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Notification cleared");
         
         //Step3: Navigate the user to Course Actions page.      
-        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj);
+        Prof_CourseActions obj = new Prof_CourseActions(courseActionObj.userObj, courseActionObj.getCourseObj());
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
