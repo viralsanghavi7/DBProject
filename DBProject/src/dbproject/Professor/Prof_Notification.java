@@ -9,11 +9,13 @@ import dbproject.dataType.*;
 import dbproject.WelcomeScreen;
 import dbproject.dataType.DataType_user;
 import dbproject.dbconnection.dbconnection_dbObject;
+import java.awt.Component;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.text.TableView;
@@ -34,11 +36,6 @@ public class Prof_Notification extends javax.swing.JFrame {
      */
     public Prof_Notification() {
         initComponents();
-        
-        
-        
-        
-        
     }
     
     //overloaded constructor
@@ -82,6 +79,37 @@ public class Prof_Notification extends javax.swing.JFrame {
             System.out.println("Prof_Notification.java:GetNotificationsFromDB() " + oops);
 
         }
+        
+        setTableSize();
+    }
+    
+    
+    private void setTableSize()
+    {
+          jTable1.setAutoResizeMode( jTable1.AUTO_RESIZE_OFF );
+ 
+        for (int column = 0; column < jTable1.getColumnCount(); column++)
+        {
+            TableColumn tableColumn = jTable1.getColumnModel().getColumn(column);
+            int preferredWidth = tableColumn.getMinWidth();
+            int maxWidth = tableColumn.getMaxWidth();
+
+            for (int row = 0; row < jTable1.getRowCount(); row++)
+            {
+                TableCellRenderer cellRenderer = jTable1.getCellRenderer(row, column);
+                Component c = jTable1.prepareRenderer(cellRenderer, row, column);
+                int width = c.getPreferredSize().width + jTable1.getIntercellSpacing().width;
+                preferredWidth = Math.max(preferredWidth, width);
+                //  We've exceeded the maximum width, no need to check other rows
+                if (preferredWidth >= maxWidth)
+                {
+                    preferredWidth = maxWidth;
+                    break;
+                }
+            }
+                tableColumn.setPreferredWidth( preferredWidth );
+            }
+                
     }
 
     /**
