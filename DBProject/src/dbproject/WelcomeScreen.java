@@ -24,6 +24,10 @@ public class WelcomeScreen extends javax.swing.JFrame {
     //
     Statement stmt = null;
     ResultSet rs = null;
+    String query;
+    String course_name;
+    String type = null;
+    DataType_user user_object = new DataType_user();
     public WelcomeScreen() {
         
         initComponents();
@@ -158,12 +162,16 @@ public class WelcomeScreen extends javax.swing.JFrame {
         char[] pwd_array = jPasswordField1.getPassword();
         String pwd = new String(pwd_array);
         
-        if (loginId == null || pwd == null)
+        if (loginId.equals("") || pwd.equals(""))
         {
-            jLabel4.setVisible(true);
-            jLabel4.setText("Invalid Credentials");
-            return;
-        }
+            this.dispose();
+             WelcomeScreen obj = new WelcomeScreen();
+            obj.setVisible(true);
+            obj.jLabel4.setText("Login ID/Password empty");
+            
+            obj.jLabel4.setVisible(true);
+        
+        }else{
         
        String query = "SELECT USER_ID,USER_NAME,USER_TYPE FROM DBUSER WHERE USER_ID = '"+ loginId + 
              "' AND USER_PASSWORD = '" + pwd +"'";
@@ -172,14 +180,16 @@ public class WelcomeScreen extends javax.swing.JFrame {
         rs = stmt.executeQuery(query);
         
         if (!rs.next()) {
-                jTextField1.setText(null);
-                jPasswordField1.setText(null);
-                jLabel4.setVisible(false);
+                WelcomeScreen obj = new WelcomeScreen();
+                obj.setVisible(true);
+                obj.jLabel4.setText("Invalid Credentials");
+                obj.jLabel4.setVisible(true);
+                this.dispose();
         }else{
              String user_type = rs.getString("USER_TYPE");//P = Professor, T = TA and S = Student
              String user_id = rs.getString("USER_ID");
              String user_name = rs.getString("USER_NAME");
-             DataType_user user_object = new DataType_user();
+             
              user_object.user_id = user_id;
              user_object.user_name = user_name;
              user_object.user_type = user_type;
@@ -188,22 +198,35 @@ public class WelcomeScreen extends javax.swing.JFrame {
              
            //  System.out.println(user_type);
             switch (user_type) {
-                case "P":
-                case "T":
-                    {
-                        
+                 case "P":
+                {
+                    
                         ProfHome obj = new ProfHome(user_object);
                         obj.setVisible(true);
                         this.dispose();
                         break;
-                    }
+                
+                
+                }
+               
                 case "S":
                     {
-                         
+                         check_if_student_only();
+        
+                        if(type.equals("student")){
+                        this.dispose();
                         Student_Home obj = new Student_Home(user_object);
+                        obj.setVisible(true);
+                        }else{
+                        Student_TA obj = new Student_TA(user_object,course_name);
                         obj.setVisible(true);
                         this.dispose();
                         break;
+                         
+//                        Student_Home obj = new Student_Home(user_object);
+//                        obj.setVisible(true);
+//                        this.dispose();
+//                        break;
                     }
                
             }
@@ -212,7 +235,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
         }
             
        
-        }
+        }}
          catch (Exception oops) {
             System.out.println(oops); 
             }
@@ -250,9 +273,34 @@ public class WelcomeScreen extends javax.swing.JFrame {
             jTextField1.setText(null);
             jPasswordField1.setText(null);
             jLabel4.setVisible(false);
-        }*/        
+
+        }*/    }    
+        
+        
+        
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void check_if_student_only(){
+             
+             query = "Select ta.student_id, c.course_name from teaching_assistant ta, course c where student_id = '"+
+                     user_object.user_id +"' and valid_till_dt >= SYSDATE and c.course_id = ta.course_id";
+             try {
+            rs = stmt.executeQuery(query);
+            if (rs.next()) {
+                type = "TA";
+                course_name = rs.getString("course_name");
+            }else{
+                 type = "student";
+            }
+            }catch (Exception oops) {
+            System.out.println("ProfHome.java:add_course_list() " + oops);
+
+                }
+             
+         }
+                     
     /**
      * @param args the command line arguments
      */
@@ -299,3 +347,4 @@ public class WelcomeScreen extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
+
