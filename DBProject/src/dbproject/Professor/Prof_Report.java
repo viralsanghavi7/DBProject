@@ -40,45 +40,42 @@ public class Prof_Report extends javax.swing.JFrame {
         Homeworks = new ArrayList<String>();
         Students = new ArrayList<String>();
         StudentHomework = new ArrayList<String>();
-        PopulateComboBoxData();
         db = dbconnection_dbObject.getDBConnection();
         stmt = db.stmt;
+        PopulateComboBoxData();
+        
     }
     
     //Method to populate all the comboboxes in all the tabs available on the UI.
     private void PopulateComboBoxData(){
         
         
-        //Step1: Populate jComboBox1 in Homework related stats tab
+        //Step1: Populate jComboBox1 in Homework related stats tab and jComboBox4 in max score students tab
         //Step2: Populate jComboBox2 in Student related stats tab
         String sCouseId = courseActionObj.getCourseID();
-        jComboBox1.addItem("--Select Homework");
-        jComboBox2.addItem("--Select Student");
         try {
             //To load the list of homeworks in select homework dropdown
             query = "SELECT assignment_id, assignment_name from assignment where course_id ='" 
                     + sCouseId +"'"
-                    + " and professor_id = '" + courseActionObj.userObj.user_id;
+                    + " and professor_id = '" + courseActionObj.userObj.user_id +"'";
             
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 Homeworks.add(rs.getString("assignment_id"));
-                jComboBox1.addItem(rs.getString("assignment_name"));                
+                jComboBox1.addItem(rs.getString("assignment_name"));
+                jComboBox4.addItem(rs.getString("assignment_name"));
             }
             
             
             //To load the list of students in select student dropdown.
-            query = "select student_id, student_name from student s, enrollment e" +
-                    "where s.student_id = e.student_id and " +
-                    "s.course_id = '" + sCouseId +"'";
+            query = "select db.user_id, db.user_name from dbuser db, enrollment e " +
+                    "where db.user_id = e.student_id and " +
+                    "e.course_id = '" + sCouseId +"'";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
-                Students.add(rs.getString("student_id"));
-                jComboBox2.addItem(rs.getString("student_name"));
+                Students.add(rs.getString("user_id"));
+                jComboBox2.addItem(rs.getString("user_name"));
             }
-            
-            
-            //Step3: Populate the table in Max score student tab
             
         } catch (Exception oops) {
             System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
@@ -134,8 +131,14 @@ public class Prof_Report extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         jInternalFrame3 = new javax.swing.JInternalFrame();
+        jLabel22 = new javax.swing.JLabel();
+        jComboBox4 = new javax.swing.JComboBox();
+        jButton5 = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jList2 = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -213,23 +216,23 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel3.setText("Maximum score:");
 
-        jLabel4.setText("max_score_value");
+        jLabel4.setText("select homework");
 
         jLabel5.setText("Minimum score:");
 
-        jLabel6.setText("min_score_value");
+        jLabel6.setText("select homework");
 
         jLabel7.setText("Average number of attempts:");
 
-        jLabel8.setText("avg_no_atmpts");
+        jLabel8.setText("select homework");
 
         jLabel9.setText("List of students who did not submit this HW:");
 
         jScrollPane1.setViewportView(jList1);
 
-        jLabel10.setText("Students who scored first max on first attempt:");
+        jLabel10.setText("Student who scored first max on first attempt:");
 
-        jLabel11.setText("student_name");
+        jLabel11.setText("select homework");
 
         javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
@@ -411,34 +414,61 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jInternalFrame3.setVisible(true);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        jLabel22.setText("Select Homework");
+
+        jButton5.setText("View");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        });
+
+        jLabel23.setText("Maximum score:");
+
+        jLabel24.setText("max_score_value");
+
+        jLabel25.setText("List of students who scored max score on their first attempt:");
+
+        jScrollPane2.setViewportView(jList2);
 
         javax.swing.GroupLayout jInternalFrame3Layout = new javax.swing.GroupLayout(jInternalFrame3.getContentPane());
         jInternalFrame3.getContentPane().setLayout(jInternalFrame3Layout);
         jInternalFrame3Layout.setHorizontalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(21, 21, 21)
+                .addGroup(jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jInternalFrame3Layout.createSequentialGroup()
+                        .addComponent(jLabel23)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel24))
+                    .addGroup(jInternalFrame3Layout.createSequentialGroup()
+                        .addComponent(jLabel22)
+                        .addGap(40, 40, 40)
+                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel25)
+                    .addComponent(jScrollPane2))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
         jInternalFrame3Layout.setVerticalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(27, 27, 27)
+                .addGroup(jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23)
+                    .addComponent(jLabel24))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel25)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Max Score students", jInternalFrame3);
@@ -512,11 +542,11 @@ public class Prof_Report extends javax.swing.JFrame {
         //Step1: Get the selected homework from the dropdown jComboBox1
         String selectedHW = Homeworks.get(jComboBox1.getSelectedIndex());
         
-        //Step2: Get the corresponding data from database for that homework
+        //Step2: Get the corresponding data from database for that homework and populate on UI
         try
         {
             //For max and min score of homework
-            query = "select max(atmpt_score) as maximum, min(atmpt_score) as minimum as min from attempt "
+            query = "select max(atmpt_score) as maximum, min(atmpt_score) as minimum from attempt "
                     + "where assignment_id = '" + selectedHW + "'";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -535,7 +565,7 @@ public class Prof_Report extends javax.swing.JFrame {
             //For student name who scored max first for particular homework
             query = "select user_name from dbuser where user_id = "
                     + "(select student_id from (select student_id from attempt where assignment_id = '"
-                    + selectedHW + "' order by atmpt_score desc, atmpt dt asc) where rownum = 1)";
+                    + selectedHW + "' order by atmpt_score desc, atmpt_dt asc) where rownum = 1)";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 jLabel11.setText(rs.getString("user_name"));
@@ -557,9 +587,7 @@ public class Prof_Report extends javax.swing.JFrame {
             
         } catch (Exception oops) {
             System.out.println("Prof_Report.java:jButton2ActionPerformed() " + oops);
-
         }
-        //Step3: Populate the data on the UI.
     }//GEN-LAST:event_jButton2ActionPerformed
 
     //View button in Student related stats tab clicked
@@ -612,7 +640,6 @@ public class Prof_Report extends javax.swing.JFrame {
                 " where at.assignment_id = a.assignment_id " +
                 " and at.student_id = '" + selectedStudentID + "')";
         
-        jComboBox3.addItem("--Select Homework");
         rs = stmt.executeQuery(query);
         while (rs.next()) {
             StudentHomework.add(rs.getString("assignment_id"));
@@ -676,7 +703,7 @@ public class Prof_Report extends javax.swing.JFrame {
         }
         
         // To find total number of attempts by particular student for particular homework.
-        query = " select at.student_id, at.assignment_id , count(at.atmpt_score) at totalAttempts from attempt at " +
+        query = " select at.student_id, at.assignment_id , count(at.atmpt_dt) at totalAttempts from attempt at " +
                 " where at.student_id = '" + selectedStudentID + "'" +
                 " and at.assignment_id = '" + selectedHWForStudent + "'" +
                 " group by at.student_id, at.assignment_id ";        
@@ -684,20 +711,62 @@ public class Prof_Report extends javax.swing.JFrame {
         while (rs.next()) {
             jLabel19.setText(rs.getString("totalAttempts"));
         }
+        
         }
         catch (Exception oops) {
             System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
-
         }
     }//GEN-LAST:event_jComboBox3ActionPerformed
 
     //event triggered when student is selected on student related stats tab
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         jComboBox3.removeAllItems();
-        jLabel21.setText("");
-        jLabel14.setText("");
-        jLabel19.setText("");
+        jLabel21.setText(" ");
+        jLabel14.setText(" ");
+        jLabel19.setText(" ");
     }//GEN-LAST:event_jComboBox2ActionPerformed
+
+    //View button in Max score students stats tab clicked
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        String selectedHW = Homeworks.get(jComboBox4.getSelectedIndex());
+        int maxScore = 0;
+        String studentName, attempt_dt;
+        try
+        {
+            query = "select max(atmpt_score) as maximum from attempt "
+                    + "where assignment_id = '" + selectedHW + "'";
+            rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                maxScore = rs.getInt("maximum");
+                jLabel24.setText(String.valueOf(maxScore));
+            }
+            
+            
+            //For finding the list of students who scored the maximum on first attempt
+            query = "select a1.student_id, db.user_name, a1.assignment_id, a1.atmpt_dt, a1.atmpt_score " +
+                    " from attempt a1, dbuser db where " +
+                    " a1.student_id = db.user_id " +
+                    " and a1.assignment_id = '" + selectedHW + "'" +
+                    " and a1.atmpt_dt =  " +
+                    " (select min(atmpt_dt) from attempt a2 " +
+                    " where a1.student_id = a2.student_id " +
+                    " and a1.assignment_id = a2.assignment_id " +
+                    " group by student_id, assignment_id) " +
+                    " and a1.atmpt_score = " + maxScore;
+            
+            rs = stmt.executeQuery(query);
+            DefaultListModel studentList = new DefaultListModel();
+            while (rs.next()) {
+                studentName = rs.getString("user_name");
+                attempt_dt = rs.getDate("atmpt_dt").toString();
+                studentList.addElement(studentName + " Attempt date:" + attempt_dt);
+            }
+            jList2.setModel(studentList);   
+        }
+        catch (Exception oops) {
+            System.out.println("Prof_Report.java:PopulateComboBoxData() " + oops);
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -742,9 +811,11 @@ public class Prof_Report extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
+    private javax.swing.JComboBox jComboBox4;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
@@ -762,6 +833,10 @@ public class Prof_Report extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -770,11 +845,11 @@ public class Prof_Report extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList jList1;
+    private javax.swing.JList jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

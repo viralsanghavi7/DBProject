@@ -10,6 +10,9 @@ import java.util.*;
 import dbproject.WelcomeScreen;
 import java.sql.*;
 import dbproject.dataType.DataType_user;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.text.SimpleDateFormat;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,42 +21,150 @@ import dbproject.dataType.DataType_user;
 public class Prof_Edit_HW extends javax.swing.JFrame {
 
     DataType_user userObj;
-    Hashtable hw_details;
+    DataType_course courseObj;
+    ArrayList<String> Homeworks;
+    public String query;
+    Statement stmt = null;
+    ResultSet rs = null;
+    boolean bWarningEnable = false;
+    
     /**
      * Creates new form MainScreen
      */
     public Prof_Edit_HW() {
         initComponents();
+        Homeworks = new ArrayList<String>();
     }
     
     //Overloaded constructor
-    public Prof_Edit_HW(DataType_user inputObj) {
+    public Prof_Edit_HW(DataType_user inputObj, DataType_course inputCourseObj) {
         initComponents();
         
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        
         userObj = inputObj;
+        courseObj = inputCourseObj;
+        Homeworks = new ArrayList<String>();
+        jLabel1.setText(courseObj.course_name);
+        jLabel1.setText(" ");
+        GetAllHomeworkList();
+    }
+    
+    
+    private void GetAllHomeworkList()
+    {
+        query = "select a.* from assignment where a.course_id = '" + courseObj.course_id + "')";
+        try {
+                rs = stmt.executeQuery(query);
+                while (rs.next()) {
+                Homeworks.add(rs.getString("assignment_id"));
+                jComboBox3.addItem(rs.getString("assignment_name"));
+                }
+            } catch (Exception oops) {
+                System.out.println("Error in GetAllHomeworkList() : " + oops);
+            }
         
-     //   jLabel1.setText(courseActionObj.courseObj.course_name);
+        if (Homeworks.size() > 0)
+        {
+          DataType_assignment assgDetails =  getAssignmentDetails(Homeworks.get(0));
+          PopulateAllHWDetails(assgDetails);
+        }
+    }
+    
+    
+    private DataType_assignment getAssignmentDetails(String assignmentID)
+    {
+        DataType_assignment assgDetails = new DataType_assignment();
         
-        PopulateAllHWDetailsInHashTable();
+        try {
+                query = "select a.* from assignment where a.assignment_id = '" + assignmentID + "')";
+                rs = stmt.executeQuery(query);
+                while (rs.next()) {
+                assgDetails.assignment_id = assignmentID;
+                assgDetails.assignment_difficulty = rs.getInt("assignment_difficulty_level");
+                assgDetails.assignment_name = rs.getString("assignment_name");
+                assgDetails.correct_points = rs.getInt("correct_points");
+                assgDetails.course_id = rs.getString("course_id");
+                assgDetails.end_dt = rs.getDate("end_dt");
+                assgDetails.start_dt = rs.getDate("start_dt");
+                assgDetails.number_of_retries = rs.getInt("number_of_retries");
+                assgDetails.penalty_points = rs.getInt("penalty_points");
+                assgDetails.professor_id = rs.getString("professor_id");
+                assgDetails.random_seed = rs.getInt("random_seed");
+                assgDetails.score_selection_method = rs.getInt("score_selection_method");
+                assgDetails.number_of_questions = rs.getInt("number_of_questions");
+                }
+            } catch (Exception oops) {
+                System.out.println("Error in GetAllHomeworkList() : " + oops);
+            }
+        
+        return assgDetails;
     }
     
     /*
-    This method will get all the homeworks and it's related data from database
-    It will populate the homework combo box to select the homework.
-    For each homework it will store the old related data that we got from database in hashtable.
+    display all homework details on UI and enable/disable fields based on hw start date
     */
-    private void PopulateAllHWDetailsInHashTable()
+    private void PopulateAllHWDetails(DataType_assignment assignment)
     {
         try
         {
-            //Step1: Get all the homeworks and it's related data to the course and which are editable (due date)
-
-            //Step2:
-
-            hw_details = new Hashtable();
+            java.util.Date currentDate = new java.util.Date();
+            if (currentDate.compareTo(assignment.start_dt) <= 0)
+            {
+                bWarningEnable = true;
+                jLabel11.setVisible(true);
+                jLabel11.setText("Warning: Can not edit/delete homework. Start date already passed");
+            }
+            else
+            {
+                bWarningEnable = false;
+                jLabel11.setVisible(false);
+            }
+            
+            //start date
+            jXDatePicker2.setDate(assignment.start_dt);
+            if (bWarningEnable)
+                jXDatePicker2.setEnabled(false);
+            
+            //end date
+            jXDatePicker3.setDate(assignment.end_dt);
+            if (bWarningEnable)
+                jXDatePicker3.setEnabled(false);
+            
+            //number of attempts
+            jComboBox4.setSelectedIndex(assignment.number_of_retries);
+            if (bWarningEnable)
+                 jComboBox4.setEnabled(false);
+            
+            //Difficulty rane
+            jComboBox1.setSelectedIndex(assignment.assignment_difficulty - 1);
+            if (bWarningEnable)
+                 jComboBox1.setEnabled(false);
+            
+            //score selection theme
+            jComboBox2.setSelectedIndex(assignment.score_selection_method - 1);
+            if (bWarningEnable)
+                 jComboBox2.setEnabled(false);
+            
+            //number of questions
+            jTextField2.setText(Integer.toString(assignment.number_of_questions));
+            if (bWarningEnable)
+                 jTextField2.setEnabled(false);
+            
+            //correct answer points
+            jTextField3.setText(Integer.toString(assignment.correct_points));
+            if (bWarningEnable)
+                 jTextField3.setEnabled(false);
+            
+            //Incorrect answer points
+            jTextField4.setText(Integer.toString(assignment.penalty_points));
+            if (bWarningEnable)
+                 jTextField4.setEnabled(false);
+            
         }
-        catch(Throwable exce) {
-            exce.printStackTrace();
+        catch(Exception oops) {
+            System.out.println("Error in GetAllHomeworkList() : " + oops);
         }
         
     }
@@ -71,8 +182,8 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         jButton10 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -82,7 +193,6 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jComboBox1 = new javax.swing.JComboBox();
         jComboBox2 = new javax.swing.JComboBox();
         jTextField2 = new javax.swing.JTextField();
@@ -90,6 +200,13 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         jTextField4 = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jComboBox3 = new javax.swing.JComboBox();
+        jXDatePicker2 = new org.jdesktop.swingx.JXDatePicker();
+        jXDatePicker3 = new org.jdesktop.swingx.JXDatePicker();
+        jComboBox4 = new javax.swing.JComboBox();
+        jButton5 = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -116,22 +233,28 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Subject Name");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                        .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(71, 71, 71)
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(52, 52, 52)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -142,9 +265,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel1.setText("Subject Name");
-
-        jButton4.setText("Save");
+        jButton4.setText("Delete Homework");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -173,12 +294,24 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
 
         jLabel10.setText("Select Homework to edit");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox3.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                PopulateHomeworkOldValues(evt);
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
             }
         });
+
+        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unlimited", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
+
+        jButton5.setText("Update Details");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("warning");
+
+        jLabel12.setText("Randomization seed");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -187,74 +320,96 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(156, 156, 156)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel10))
-                        .addGap(80, 80, 80)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField4)
-                            .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel12))
+                                .addGap(80, 80, 80)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jXDatePicker2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jXDatePicker3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(91, 91, 91)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(47, Short.MAX_VALUE))
+                        .addGap(99, 99, 99)
+                        .addComponent(jLabel11)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel10)
+                        .addGap(30, 30, 30)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jXDatePicker2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(8, 8, 8)
-                .addComponent(jLabel3)
-                .addGap(21, 21, 21)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jXDatePicker3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(23, 23, 23)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
+                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -265,8 +420,8 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -282,16 +437,37 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
 
 
     /*
-    Code for 'Save' button
+    Code for 'delete homework' button
     */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        //Step1: Check if all the values are in correct format.
+        //Step1: chcek if the hoemwork can be deleted
+        if (bWarningEnable)
+        {
+            JOptionPane.showMessageDialog(this, "Can not delete homework");
+            return;
+        }
         
         //Step2: Update the perticular homework record in database.
+        String selectedHW = Homeworks.get(jComboBox3.getSelectedIndex());
         
+        try
+        {
+        //delete chosen_question entries first
+        query = "delete from chosen_question where assignment_id = '" + selectedHW + "'";
         
+        rs = stmt.executeQuery(query);
+                
+        //delete from assignment table
+        query = "delete from assignment where assignment_id = '" + selectedHW + "'";
+        
+        rs = stmt.executeQuery(query);
+        
+        } catch (Exception oops) {
+            System.out.println("Prof_Edit_HW.java:DeleteHomework() " + oops);
+        }
         //Step3: Navigate professor to course Actions page.
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        JOptionPane.showMessageDialog(this, "Homework deleted");
+        Prof_CourseActions obj = new Prof_CourseActions(userObj, courseObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -323,13 +499,74 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /*
-    This method will populate old values from 
-    */
-    private void PopulateHomeworkOldValues(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_PopulateHomeworkOldValues
+    //Code for 'update details' button
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        //Step1: chcek if the hoemwork can be updated
+        if (bWarningEnable)
+        {
+            JOptionPane.showMessageDialog(this, "Can not update homework details");
+            return;
+        }
         
+        //Step2: Update the perticular homework record in database.
+        String selectedHW = Homeworks.get(jComboBox3.getSelectedIndex());
         
-    }//GEN-LAST:event_PopulateHomeworkOldValues
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MMM-yy");
+        
+        //start date
+        java.util.Date start_date_swing_format = jXDatePicker2.getDate();        
+        String start_date = DATE_FORMAT.format(start_date_swing_format);
+        
+        //end date
+        java.util.Date end_date_swing_format =  jXDatePicker3.getDate();
+        String end_date = DATE_FORMAT.format(end_date_swing_format);
+        
+        int no_of_retries = jComboBox4.getSelectedIndex();
+        int difficulty_range = (jComboBox1.getSelectedIndex())+1;
+        int randomization_seed = Integer.parseInt(jTextField1.getText());
+        int score_selection = (jComboBox2.getSelectedIndex())+1;
+        int number_of_questions = Integer.parseInt(jTextField2.getText());
+        int correct_answer_point = Integer.parseInt(jTextField3.getText());
+        int penalty_points = Integer.parseInt(jTextField4.getText());
+        
+        try
+        {
+        
+        query = "update assignment set " +
+                " assignment_difficulty_level = " + difficulty_range + ", " +
+                " number_of_retries = " + no_of_retries + ", " +
+                " random_seed = " + randomization_seed + ", " +
+                " penalty_points = " + penalty_points + ", " +
+                " correct_points = " + correct_answer_point + ", " +
+                " start_dt = " + start_date + ", " +
+                " end_dt = " + end_date + ", " +
+                " score_selection_method = " + score_selection + ", " +
+                " course_id = '" + courseObj.course_id + "', " +
+                " professor_id = '" + userObj.user_id + "', " +
+                " number_of_questions = " + number_of_questions + ", " +
+                " where assignment_id = '" + selectedHW + "' ";
+        
+        rs = stmt.executeQuery(query);
+        
+        } catch (Exception oops) {
+            System.out.println("Prof_Edit_HW.java:UpdateHomework() " + oops);
+
+        }
+        
+        //Step3: Navigate professor to course Actions page.
+        JOptionPane.showMessageDialog(this, "Homework details updated");
+        Prof_CourseActions obj = new Prof_CourseActions(userObj, courseObj);
+        obj.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    //When different homework is selected from dropdown
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        String selectedHW = Homeworks.get(jComboBox3.getSelectedIndex());
+        
+        DataType_assignment assgDetails =  getAssignmentDetails(selectedHW);
+        PopulateAllHWDetails(assgDetails);        
+    }//GEN-LAST:event_jComboBox3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -375,11 +612,15 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
+    private javax.swing.JComboBox jComboBox4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -394,5 +635,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private org.jdesktop.swingx.JXDatePicker jXDatePicker2;
+    private org.jdesktop.swingx.JXDatePicker jXDatePicker3;
     // End of variables declaration//GEN-END:variables
 }
