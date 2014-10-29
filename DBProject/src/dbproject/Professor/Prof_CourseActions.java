@@ -36,7 +36,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
         
         // for TAs don't display these buttons        
-        if (userObj!=null && userObj.user_type.equals("T"))
+        if (userObj!=null && userObj.user_type.equals("S"))
         {
             jButton4.setVisible(false);
             jButton5.setVisible(false);
@@ -53,7 +53,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
         jLabel1.setText(course.course_name + "" + course.course_id);
         // for TAs don't display these buttons        
-        if (userObj!=null && userObj.user_type.equals("T"))
+        if (userObj!=null && userObj.user_type.equals("S"))
         {
             jButton4.setVisible(false);
             jButton5.setVisible(false);
