@@ -25,7 +25,7 @@ public class DataType_assignment {
     public String course_id;
     public String professor_id;
 
-    public Integer number_of_questions;
+    public int number_of_questions;
     
     public DataType_assignment(){}
 
