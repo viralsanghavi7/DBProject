@@ -13,10 +13,7 @@ import dbproject.dbconnection.dbconnection_dbObject;
 import java.io.*;
 import java.sql.*;
 
-/**
- *
- * @author Chetan
- */
+
 public class ProfHome extends javax.swing.JFrame {
 
     DataType_user userObj;
@@ -55,7 +52,7 @@ public class ProfHome extends javax.swing.JFrame {
         init_course_list();
 
         // for TA view don't display these buttons
-        if (inputObj.user_type.equals("t")) {
+        if (inputObj.user_type.equals("S")) {
 
             jButton2.setVisible(false);
             jButton1.setVisible(false);
@@ -378,10 +375,17 @@ public class ProfHome extends javax.swing.JFrame {
 
         int i = 0;
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        if(userObj.user_type.equals("S")){
+        
+            query = "select c.course_id, c.course_name, c.course_level, c.course_start_dt, c.course_end_dt,"
+                    + "c.max_students_allowed, c.no_of_students_enrolled from course c where "
+                    + "c.course_id = (select course_id from teaching_assistant where student_id ='"
+                    + userObj.user_id + "')";
+        }else{
         query = "(SELECT T.PROF_ID,T.COURSE_ID,C.COURSE_NAME,C.COURSE_LEVEL, C.COURSE_START_DT,"
                 + "C.COURSE_END_DT, C.MAX_STUDENTS_ALLOWED, C.NO_OF_STUDENTS_ENROLLED "
                 + " FROM TAUGHT_BY T,COURSE C WHERE T.PROF_ID='"
-                + userObj.user_id + "' AND C.COURSE_ID = T.COURSE_ID)";
+                + userObj.user_id + "' AND C.COURSE_ID = T.COURSE_ID)"; }
        System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
