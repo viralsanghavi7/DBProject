@@ -46,7 +46,7 @@ public class Prof_AddHW extends javax.swing.JFrame {
         
         userObj = inputObj;
         course_object = course;
-        
+        jLabel1.setText(course.course_name + "" + course.course_id);
         jLabel1.setText(course.course_name);
 //        jLabel1.setText(courseActionObj.courseObj.course_name);
     }
@@ -192,6 +192,11 @@ public class Prof_AddHW extends javax.swing.JFrame {
         jLabel11.setText("Assignment Name");
 
         jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unlimited", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
+        jComboBox3.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox3ItemStateChanged(evt);
+            }
+        });
         jComboBox3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox3ActionPerformed(evt);
@@ -397,7 +402,13 @@ public class Prof_AddHW extends javax.swing.JFrame {
 
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_jComboBox3ActionPerformed
+
+    private void jComboBox3ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox3ItemStateChanged
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jComboBox3ItemStateChanged
 
     /**
      * @param args the command line arguments

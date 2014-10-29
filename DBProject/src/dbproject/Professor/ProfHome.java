@@ -335,9 +335,10 @@ public class ProfHome extends javax.swing.JFrame {
 
         int i = 0;
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
-        query = "(SELECT C.COURSE_ID, C.COURSE_NAME, C.COURSE_LEVEL, C.COURSE_START_DT, C.COURSE_END_DT,"
+        query = "SELECT distinct(C.COURSE_ID), C.COURSE_NAME, C.COURSE_LEVEL, C.COURSE_START_DT, C.COURSE_END_DT,"
                 + "C.NO_OF_STUDENTS_ENROLLED, C.MAX_STUDENTS_ALLOWED FROM COURSE C, TAUGHT_BY T WHERE"
-                + " T.PROF_ID = '"+ userObj.user_id +"' and T.course_id <> C.course_id)";
+                + " c.course_id not in (select tb.course_id from taught_by tb where "
+                + "tb.PROF_ID = '"+ userObj.user_id +"' )";
         System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
@@ -353,7 +354,8 @@ public class ProfHome extends javax.swing.JFrame {
 
                 course_array[i] = temp_course;
                 course_list[i] = temp_course.course_id;
-                jComboBox1.addItem(rs.getString("COURSE_NAME"));
+                i++;
+                jComboBox1.addItem(rs.getString("COURSE_NAME")+" "+temp_course.course_id);
             }
         } catch (Exception oops) {
             System.out.println("ProfHome.java:add_course_list() " + oops);
@@ -364,7 +366,7 @@ public class ProfHome extends javax.swing.JFrame {
         //DataType_courseAction courseActionObj = new DataType_courseAction();
         //     courseActionObj.courseObj = courseObj;
         //courseActionObj.userObj = userObj;
-        course_array[index] = temp_course;
+       // course_array[index] = temp_course;
         System.out.println(course_array[index]);
         Prof_CourseActions obj = new Prof_CourseActions(userObj,course_array[index]);
         obj.setVisible(true);
@@ -395,7 +397,8 @@ public class ProfHome extends javax.swing.JFrame {
                         
                 course_array[i] = temp_course;
                 course_list[i] = temp_course.course_id;
-                jComboBox1.addItem(rs.getString("COURSE_NAME"));
+                i++;
+                jComboBox1.addItem(rs.getString("COURSE_NAME")+" "+temp_course.course_id);
             }
         } catch (Exception oops) {
             System.out.println("ProfHome.java:add_course_list() " + oops);

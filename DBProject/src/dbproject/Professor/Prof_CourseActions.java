@@ -51,7 +51,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
         userObj = inputObj;
         course = courseobj;
     //    jLabel1.setText(courseActionObj.courseObj.course_name);
-        jLabel1.setText(course.course_name);
+        jLabel1.setText(course.course_name + "" + course.course_id);
         // for TAs don't display these buttons        
         if (userObj!=null && userObj.user_type.equals("T"))
         {
@@ -278,7 +278,7 @@ public class Prof_CourseActions extends javax.swing.JFrame {
     Click of View Homework button
     */
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        Prof_View_HW obj = new Prof_View_HW(userObj);
+        Prof_View_HW obj = new Prof_View_HW(userObj,course);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton7ActionPerformed

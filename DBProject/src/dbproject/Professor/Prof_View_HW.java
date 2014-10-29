@@ -7,7 +7,11 @@ package dbproject.Professor;
 
 import dbproject.dataType.*;
 import dbproject.WelcomeScreen;
+import dbproject.dbconnection.dbconnection_dbObject;
+import java.awt.Color;
 import java.util.*;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -16,8 +20,17 @@ import java.util.*;
 public class Prof_View_HW extends javax.swing.JFrame {
 
     DataType_user userObj;
+    DataType_course courseObj;
     Hashtable currentHWKeys;
     Hashtable pastDueHWKeys;
+    String query_past;
+    String query_current;
+    Statement stmt;
+    ResultSet rs;
+    ArrayList<DataType_assignment> current_assignment = new ArrayList<DataType_assignment>();
+    ArrayList<DataType_assignment> past_assignment = new ArrayList<DataType_assignment>();
+    ArrayList<String> allQuestions = new ArrayList<String>();
+    String query;
     
     
     /**
@@ -28,11 +41,21 @@ public class Prof_View_HW extends javax.swing.JFrame {
     }
     
     //Overloaded constructor
-    public Prof_View_HW(DataType_user inputObj) {
+    public Prof_View_HW(DataType_user inputObj, DataType_course course) {
         initComponents();
         userObj = inputObj;
-        
+        courseObj=course;
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;    
+        jLabel1.setText(course.course_name + "" + course.course_id);
         populateHomeworksComboboxes();
+        if(jComboBox1.getItemCount() == 0 ){
+            jButton4.setVisible(false);
+        }
+        if(jComboBox2.getItemCount() == 0 ){
+            jButton2.setVisible(false);
+        }
+            
     }
     
     /*
@@ -40,8 +63,76 @@ public class Prof_View_HW extends javax.swing.JFrame {
     */
     private void populateHomeworksComboboxes()
     {
-        currentHWKeys = new Hashtable();
-        pastDueHWKeys = new Hashtable();
+        
+        query_past = "SELECT assignment_id ,assignment_name,assignment_difficulty_level,"
+                         + " number_of_retries, random_seed , penalty_points,correct_points, start_dt , "
+                         + "end_dt , score_selection_method , course_id ,professor_id,number_of_questions from assignment "
+                + "where course_id ='" + courseObj.course_id +"' and end_dt < SYSDATE"; 
+        
+        System.out.println(query_past);
+        query_current = "SELECT assignment_id ,assignment_name,assignment_difficulty_level,"
+                         + " number_of_retries, random_seed , penalty_points,correct_points, start_dt , "
+                         + "end_dt , score_selection_method , course_id ,professor_id,number_of_questions from assignment "
+                + "where course_id ='" + courseObj.course_id +"' and end_dt >= SYSDATE"; 
+        System.out.println(query_current);
+        try {
+            rs = stmt.executeQuery(query_past);
+            
+            while (rs.next()) {
+            DataType_assignment assignment_object = new DataType_assignment();    
+              
+            assignment_object.assignment_id = rs.getString("assignment_id");
+            assignment_object.assignment_name = rs.getString("assignment_name");
+            assignment_object.assignment_difficulty = rs.getInt("assignment_difficulty_level");
+            assignment_object.number_of_retries = rs.getInt("number_of_retries");
+            assignment_object.random_seed = rs.getInt("random_seed");
+            assignment_object.penalty_points = rs.getInt("penalty_points");
+            assignment_object.correct_points = rs.getInt("correct_points");
+            assignment_object.correct_points = rs.getInt("correct_points");
+            assignment_object.start_dt = rs.getDate("start_dt");
+            assignment_object.end_dt = rs.getDate("end_dt");
+            assignment_object.score_selection_method = rs.getInt("score_selection_method");
+            assignment_object.course_id = rs.getString("course_id");
+            assignment_object.professor_id = rs.getString("professor_id");
+            assignment_object.number_of_questions = rs.getInt("number_of_questions");
+            
+               
+                current_assignment.add(assignment_object);
+                jComboBox2.addItem(rs.getString("assignment_name"));
+            }
+            
+            rs = stmt.executeQuery(query_current);
+            
+            while (rs.next()) {
+                
+                DataType_assignment assignment_object = new DataType_assignment();  
+                
+             assignment_object.assignment_id = rs.getString("assignment_id");
+            assignment_object.assignment_name = rs.getString("assignment_name");
+            assignment_object.assignment_difficulty = rs.getInt("assignment_difficulty_level");
+            assignment_object.number_of_retries = rs.getInt("number_of_retries");
+            assignment_object.random_seed = rs.getInt("random_seed");
+            assignment_object.penalty_points = rs.getInt("penalty_points");
+            assignment_object.correct_points = rs.getInt("correct_points");
+            assignment_object.correct_points = rs.getInt("correct_points");
+            assignment_object.start_dt = rs.getDate("start_dt");
+            assignment_object.end_dt = rs.getDate("end_dt");
+            assignment_object.score_selection_method = rs.getInt("score_selection_method");
+            assignment_object.course_id = rs.getString("course_id");
+            assignment_object.professor_id = rs.getString("professor_id");
+            assignment_object.number_of_questions = rs.getInt("number_of_questions");
+                current_assignment.add(assignment_object);
+                jComboBox1.addItem(rs.getString("assignment_name"));
+            }
+            
+        } catch (Exception oops) {
+            System.out.println("ProfAss_Remove_Question.java:load_assignments() " + oops);
+
+        }
+    
+        
+        //currentHWKeys = new Hashtable();
+        //pastDueHWKeys = new Hashtable();
         
         //Step1: Connect to database to get the list of past due homeworks and current homeworks
         
@@ -159,11 +250,19 @@ public class Prof_View_HW extends javax.swing.JFrame {
 
         jLabel2.setText("Current Homeworks");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Past Due Homeworks");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Search");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -174,15 +273,20 @@ public class Prof_View_HW extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Questions"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jButton4.setText("Search");
@@ -196,33 +300,33 @@ public class Prof_View_HW extends javax.swing.JFrame {
 
         jLabel5.setText("End Date:");
 
-        jLabel6.setText("start date value");
+        jLabel6.setText("_______________");
 
-        jLabel7.setText("end date value");
+        jLabel7.setText("_______________");
 
         jLabel8.setText("Number of Attempts:");
 
         jLabel9.setText("Difficulty Rane:");
 
-        jLabel10.setText("atmt_value");
+        jLabel10.setText("_______________");
 
-        jLabel11.setText("range_value");
+        jLabel11.setText("_______________");
 
         jLabel12.setText("Score Selection Method:");
 
-        jLabel13.setText("Method_value");
+        jLabel13.setText("_______________");
 
         jLabel14.setText("Number of questions:");
 
-        jLabel15.setText("No_value");
+        jLabel15.setText("_______________");
 
         jLabel16.setText("Correct Answer Points:");
 
-        jLabel17.setText("correct_val");
+        jLabel17.setText("_______________");
 
         jLabel18.setText("Incorrect Answer Points:");
 
-        jLabel19.setText("incorrt_val");
+        jLabel19.setText("_______________");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -369,7 +473,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
     Back
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj,courseObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -385,28 +489,124 @@ public class Prof_View_HW extends javax.swing.JFrame {
 
     //Search button for current hoemwork combobox
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        String selectedSubject = jComboBox1.getSelectedItem().toString();
+       // String selectedSubject = jComboBox1.getSelectedItem().toString();
         
         //Get the corresponding AssignmentId from currentHWKeys hashtable
-        String AssignmentId = currentHWKeys.get(selectedSubject).toString();
-        PopulateValuesOnUI(AssignmentId);
+      //  String AssignmentId = currentHWKeys.get(selectedSubject).toString();
+        
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
+        
+         jButton2.setBackground(null);
+          jButton4.setBackground(Color.YELLOW);
+          PopulateValuesOnUI("current");
+    }
+        public void PopulateValuesOnUI(String type){
+            int combo_selection = 0;
+            if(type .equals("current")){
+                combo_selection = jComboBox1.getSelectedIndex();
+            }else if(type .equals("past")){
+                    combo_selection = jComboBox2.getSelectedIndex();
+            }
+        jLabel6.setText(current_assignment.get(combo_selection).start_dt.toString());
+        jLabel7.setText(current_assignment.get(combo_selection).end_dt.toString());
+        jLabel13.setText(current_assignment.get(combo_selection).score_selection_method.toString());
+        jLabel15.setText(current_assignment.get(combo_selection).number_of_questions.toString());
+        if(current_assignment.get(combo_selection).number_of_retries == 0){
+        jLabel10.setText("Unlimited");
+        }else{
+        jLabel10.setText(current_assignment.get(combo_selection).number_of_retries.toString());
+        }
+        jLabel11.setText(current_assignment.get(combo_selection).assignment_difficulty.toString());
+        jLabel17.setText(current_assignment.get(combo_selection).correct_points.toString());
+        jLabel19.setText(current_assignment.get(combo_selection).penalty_points.toString());
+        
+        
+        
+        //System.out.println(current_assignment.get(combo_selection).start_dt);
+        
+         allQuestions.clear();
+        System.out.println( combo_selection);
+        
+        String assignmentId = current_assignment.get(combo_selection).assignment_id;
+        query = "SELECT q.ques_text,q.question_id from question q, chosen_question c where q.question_id = c.question_id"
+                + " and c.assignment_id = '" + assignmentId + "'";
+                
+                
+        
+        Object[] data = new Object[1];
+        
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        model.getDataVector().removeAllElements();
+        System.out.println(query);
+        try {
+            rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                
+                
+                data[0] = rs.getString("ques_text");
+                allQuestions.add(rs.getString("question_id"));
+                model.addRow(data);
+                
+            }
+            
+            
+        } catch (Exception oops) {
+            System.out.println("Prof_View_HW.java:jButton4ActionPerformed " + oops);
+
+         }
+        
+       
+        
     }//GEN-LAST:event_jButton4ActionPerformed
 
     //Search button for past due hoemwork combobox
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String selectedSubject = jComboBox1.getSelectedItem().toString();
+    //    String selectedSubject = jComboBox1.getSelectedItem().toString();
         
         //Get the corresponding AssignmentId from pastDueHWKeys hashtable
-        String AssignmentId = pastDueHWKeys.get(selectedSubject).toString();
-        PopulateValuesOnUI(AssignmentId);
+      //  String AssignmentId = pastDueHWKeys.get(selectedSubject).toString();
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
+        
+        jButton4.setBackground(null);
+        jButton2.setBackground(Color.YELLOW);
+        PopulateValuesOnUI("past");
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
+        int rows = model.getRowCount(); 
+        for(int i = rows - 1; i >=0; i--)   
+        {
+            model.removeRow(i);  
+        }    
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /*
     This method is responsible for displaying the deailed data for perticular assignment on UI.
     */
-    private void PopulateValuesOnUI(String AssignmentId){
-        
-    }
+  
     /**
      * @param args the command line arguments
      */
