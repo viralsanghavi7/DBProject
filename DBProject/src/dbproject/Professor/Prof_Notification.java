@@ -81,7 +81,12 @@ public class Prof_Notification extends javax.swing.JFrame {
 
         }
         
-        setTableSize();
+        if (notifiationList.size() == 0)
+        {
+            jLabel1.setText("No notifications available");
+        }
+        else
+            setTableSize();
     }
     
     

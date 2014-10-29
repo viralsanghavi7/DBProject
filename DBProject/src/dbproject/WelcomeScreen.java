@@ -36,6 +36,7 @@ public class WelcomeScreen extends javax.swing.JFrame {
 	public WelcomeScreen(String warningMessage, Color color) {
         
         initComponents();
+        jLabel4.setVisible(true);
         jLabel4.setText(warningMessage);
         jLabel4.setForeground(color);
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
@@ -153,10 +154,16 @@ public class WelcomeScreen extends javax.swing.JFrame {
     Click of Login button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         String loginId = jTextField1.getText().toString();
-         char[] pwd_array = jPasswordField1.getPassword();
+        String loginId = jTextField1.getText().toString();
+        char[] pwd_array = jPasswordField1.getPassword();
         String pwd = new String(pwd_array);
-         
+        
+        if (loginId == null || pwd == null)
+        {
+            jLabel4.setVisible(true);
+            jLabel4.setText("Invalid Credentials");
+            return;
+        }
         
        String query = "SELECT USER_ID,USER_NAME,USER_TYPE FROM DBUSER WHERE USER_ID = '"+ loginId + 
              "' AND USER_PASSWORD = '" + pwd +"'";

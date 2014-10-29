@@ -67,10 +67,11 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         jLabel1.setText(course.course_name + "" + course.course_id);
         jLabel4.setVisible(false);
         if(jComboBox1.getItemCount() == 0 || jComboBox2.getItemCount() == 0){
-            jButton2.setVisible(false);
-            jButton5.setVisible(false);
-            jButton3.setVisible(false);
-
+            jButton2.setEnabled(false);
+            jButton5.setEnabled(false);
+            jButton3.setEnabled(false);
+            jLabel4.setVisible(true);
+            jLabel4.setText("No Homeworks to add/remove questions.");
         }
             
         
@@ -330,7 +331,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-    //    obj.setVisible(true);
+        obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 

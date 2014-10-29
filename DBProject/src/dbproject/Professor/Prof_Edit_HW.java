@@ -46,15 +46,23 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         userObj = inputObj;
         courseObj = inputCourseObj;
         Homeworks = new ArrayList<String>();
-        jLabel1.setText(courseObj.course_name);
-        jLabel1.setText(" ");
+        jLabel1.setText(courseObj.course_name + " " + courseObj.course_id);
+        jLabel11.setVisible(false);
         GetAllHomeworkList();
+        
+        if (Homeworks.size() == 0)
+        {
+            jButton4.setEnabled(false);
+            jButton5.setEnabled(false);
+            jLabel11.setVisible(true);
+            jLabel11.setText("No homework to edit. Please add homework first.");
+        }
     }
     
     
     private void GetAllHomeworkList()
     {
-        query = "select a.* from assignment where a.course_id = '" + courseObj.course_id + "')";
+        query = "select a.* from assignment a where a.course_id = '" + courseObj.course_id + "'";
         try {
                 rs = stmt.executeQuery(query);
                 while (rs.next()) {
@@ -78,7 +86,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         DataType_assignment assgDetails = new DataType_assignment();
         
         try {
-                query = "select a.* from assignment where a.assignment_id = '" + assignmentID + "')";
+                query = "select a.* from assignment a where a.assignment_id = '" + assignmentID + "'";
                 rs = stmt.executeQuery(query);
                 while (rs.next()) {
                 assgDetails.assignment_id = assignmentID;
@@ -110,7 +118,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         try
         {
             java.util.Date currentDate = new java.util.Date();
-            if (currentDate.compareTo(assignment.start_dt) <= 0)
+            if (currentDate.compareTo(assignment.start_dt) > 0)
             {
                 bWarningEnable = true;
                 jLabel11.setVisible(true);
@@ -137,7 +145,12 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
             if (bWarningEnable)
                  jComboBox4.setEnabled(false);
             
-            //Difficulty rane
+            //randomization seed
+            jTextField1.setText(Integer.toString(assignment.random_seed));
+            if (bWarningEnable)
+                 jTextField1.setEnabled(false);
+            
+            //Difficulty range
             jComboBox1.setSelectedIndex(assignment.assignment_difficulty - 1);
             if (bWarningEnable)
                  jComboBox1.setEnabled(false);
@@ -309,6 +322,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
             }
         });
 
+        jLabel11.setForeground(new java.awt.Color(255, 51, 51));
         jLabel11.setText("warning");
 
         jLabel12.setText("Randomization seed");
@@ -485,7 +499,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Back button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Prof_CourseActions obj = new Prof_CourseActions(userObj);
+        Prof_CourseActions obj = new Prof_CourseActions(userObj, courseObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -538,12 +552,12 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
                 " random_seed = " + randomization_seed + ", " +
                 " penalty_points = " + penalty_points + ", " +
                 " correct_points = " + correct_answer_point + ", " +
-                " start_dt = " + start_date + ", " +
-                " end_dt = " + end_date + ", " +
+                " start_dt = '" + start_date + "', " +
+                " end_dt = '" + end_date + "', " +
                 " score_selection_method = " + score_selection + ", " +
                 " course_id = '" + courseObj.course_id + "', " +
                 " professor_id = '" + userObj.user_id + "', " +
-                " number_of_questions = " + number_of_questions + ", " +
+                " number_of_questions = " + number_of_questions + " " +
                 " where assignment_id = '" + selectedHW + "' ";
         
         rs = stmt.executeQuery(query);

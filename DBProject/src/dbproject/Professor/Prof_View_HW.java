@@ -21,8 +21,6 @@ public class Prof_View_HW extends javax.swing.JFrame {
 
     DataType_user userObj;
     DataType_course courseObj;
-    Hashtable currentHWKeys;
-    Hashtable pastDueHWKeys;
     String query_past;
     String query_current;
     Statement stmt;
@@ -48,12 +46,19 @@ public class Prof_View_HW extends javax.swing.JFrame {
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         stmt = db.stmt;    
         jLabel1.setText(course.course_name + "" + course.course_id);
+        jLabel22.setVisible(false);
         populateHomeworksComboboxes();
         if(jComboBox1.getItemCount() == 0 ){
-            jButton4.setVisible(false);
+            jButton4.setEnabled(false);
         }
         if(jComboBox2.getItemCount() == 0 ){
-            jButton2.setVisible(false);
+            jButton2.setEnabled(false);
+        }
+        
+        if (current_assignment.size() == 0 && past_assignment.size() == 0)
+        {
+            jLabel22.setVisible(true);
+            jLabel22.setText("No assignments found");
         }
             
     }
@@ -97,7 +102,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
             assignment_object.number_of_questions = rs.getInt("number_of_questions");
             
                
-                current_assignment.add(assignment_object);
+                past_assignment.add(assignment_object);
                 jComboBox2.addItem(rs.getString("assignment_name"));
             }
             
@@ -113,7 +118,6 @@ public class Prof_View_HW extends javax.swing.JFrame {
             assignment_object.number_of_retries = rs.getInt("number_of_retries");
             assignment_object.random_seed = rs.getInt("random_seed");
             assignment_object.penalty_points = rs.getInt("penalty_points");
-            assignment_object.correct_points = rs.getInt("correct_points");
             assignment_object.correct_points = rs.getInt("correct_points");
             assignment_object.start_dt = rs.getDate("start_dt");
             assignment_object.end_dt = rs.getDate("end_dt");
@@ -184,6 +188,9 @@ public class Prof_View_HW extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -328,28 +335,18 @@ public class Prof_View_HW extends javax.swing.JFrame {
 
         jLabel19.setText("_______________");
 
+        jLabel20.setText("Random Seed:");
+
+        jLabel21.setText("_________");
+
+        jLabel22.setText("Warning");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(33, 33, 33)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton2))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton4)))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -390,13 +387,40 @@ public class Prof_View_HW extends javax.swing.JFrame {
                                     .addComponent(jLabel11)
                                     .addComponent(jLabel17)
                                     .addComponent(jLabel19))
-                                .addGap(13, 13, 13)))))
+                                .addGap(13, 13, 13))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel22)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(33, 33, 33)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton2))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton4)))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel21)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel22)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -432,8 +456,12 @@ public class Prof_View_HW extends javax.swing.JFrame {
                     .addComponent(jLabel15)
                     .addComponent(jLabel18)
                     .addComponent(jLabel19))
-                .addGap(21, 21, 21)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel21))
+                .addGap(15, 15, 15)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -507,32 +535,37 @@ public class Prof_View_HW extends javax.swing.JFrame {
     }
         public void PopulateValuesOnUI(String type){
             int combo_selection = 0;
+            ArrayList<DataType_assignment> selectedAssignments;
             if(type .equals("current")){
+                selectedAssignments = current_assignment;
                 combo_selection = jComboBox1.getSelectedIndex();
-            }else if(type .equals("past")){
+            }
+            else 
+            {
+                selectedAssignments = past_assignment;
                     combo_selection = jComboBox2.getSelectedIndex();
             }
-        jLabel6.setText(current_assignment.get(combo_selection).start_dt.toString());
-        jLabel7.setText(current_assignment.get(combo_selection).end_dt.toString());
-        jLabel13.setText(current_assignment.get(combo_selection).score_selection_method.toString());
-        jLabel15.setText(current_assignment.get(combo_selection).number_of_questions.toString());
-        if(current_assignment.get(combo_selection).number_of_retries == 0){
+        jLabel6.setText(selectedAssignments.get(combo_selection).start_dt.toString());
+        jLabel7.setText(selectedAssignments.get(combo_selection).end_dt.toString());
+        jLabel13.setText(selectedAssignments.get(combo_selection).score_selection_method.toString());
+        jLabel15.setText(selectedAssignments.get(combo_selection).number_of_questions.toString());
+        if(selectedAssignments.get(combo_selection).number_of_retries == 0){
         jLabel10.setText("Unlimited");
         }else{
-        jLabel10.setText(current_assignment.get(combo_selection).number_of_retries.toString());
+        jLabel10.setText(selectedAssignments.get(combo_selection).number_of_retries.toString());
         }
-        jLabel11.setText(current_assignment.get(combo_selection).assignment_difficulty.toString());
-        jLabel17.setText(current_assignment.get(combo_selection).correct_points.toString());
-        jLabel19.setText(current_assignment.get(combo_selection).penalty_points.toString());
+        jLabel11.setText(selectedAssignments.get(combo_selection).assignment_difficulty.toString());
+        jLabel17.setText(selectedAssignments.get(combo_selection).correct_points.toString());
+        jLabel19.setText(selectedAssignments.get(combo_selection).penalty_points.toString());
+        jLabel21.setText(selectedAssignments.get(combo_selection).random_seed.toString());
         
         
-        
-        //System.out.println(current_assignment.get(combo_selection).start_dt);
+        //System.out.println(selectedAssignments.get(combo_selection).start_dt);
         
          allQuestions.clear();
         System.out.println( combo_selection);
         
-        String assignmentId = current_assignment.get(combo_selection).assignment_id;
+        String assignmentId = selectedAssignments.get(combo_selection).assignment_id;
         query = "SELECT q.ques_text,q.question_id from question q, chosen_question c where q.question_id = c.question_id"
                 + " and c.assignment_id = '" + assignmentId + "'";
                 
@@ -666,6 +699,9 @@ public class Prof_View_HW extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
