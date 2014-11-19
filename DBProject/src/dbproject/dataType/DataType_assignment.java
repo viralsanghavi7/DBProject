@@ -24,15 +24,34 @@ public class DataType_assignment {
     public Integer score_selection_method;
     public String course_id;
     public String professor_id;
-
     public Integer number_of_questions;
+    private String student_id;
+    private int number;
     
-    public DataType_assignment(){}
+    public DataType_assignment()
+    {}
 
-    //public int number_of_questions;
-    
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
     
 
+    public String getStudent_id() {
+        return student_id;
+    }
+
+    public void setStudent_id(String student_id) {
+        this.student_id = student_id;
+    }
+    
+
+    public int getNumber_of_questions() {
+        return number_of_questions;
+    }
 
     public String getAssignment_id() {
         return assignment_id;
@@ -83,7 +102,7 @@ public class DataType_assignment {
     }
     
 
-    public DataType_assignment(String assignment_id, String assignment_name, Integer assignment_difficulty, Integer number_of_retries, Integer penalty_points, Integer correct_points,Date start_dt, Date end_dt,  Integer score_selection_method, String course_id, String professor_id) {
+    public DataType_assignment(int num,Integer random, String assignment_id, String assignment_name, Integer assignment_difficulty, Integer number_of_retries, Integer penalty_points, Integer correct_points,Date start_dt, Date end_dt,  Integer score_selection_method, String course_id, String professor_id) {
         this.assignment_id = assignment_id;
         this.assignment_name = assignment_name;
         this.assignment_difficulty = assignment_difficulty;
@@ -95,6 +114,8 @@ public class DataType_assignment {
         this.professor_id = professor_id;
         this.start_dt = start_dt;
         this.end_dt = end_dt;
+        this.random_seed = random;
+        this.number_of_questions = num;
     }
     
 }

@@ -236,7 +236,7 @@ public class ProfHome extends javax.swing.JFrame {
         String subjectName = jComboBox1.getSelectedItem().toString();
         int index = jComboBox1.getSelectedIndex();
         if (bAddCourseClicked) {
-            System.out.println(userObj.user_id);
+            //System.out.println(userObj.user_id);
             //Insert the relationship between course and professor
             //fetch the courses to populate the dropdown again.
 
@@ -244,7 +244,7 @@ public class ProfHome extends javax.swing.JFrame {
             //   jLabel1.setText("Select a course from dropdown:");
             query = "INSERT INTO taught_by (prof_id, course_id) "
                     + "VALUES ('" + userObj.user_id + "','" + course_list[index] + "')";
-            System.out.println(query);
+            //System.out.println(query);
             try {
                 rs = stmt.executeQuery(query);
 
@@ -334,9 +334,8 @@ public class ProfHome extends javax.swing.JFrame {
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         query = "SELECT distinct(C.COURSE_ID), C.COURSE_NAME, C.COURSE_LEVEL, C.COURSE_START_DT, C.COURSE_END_DT,"
                 + "C.NO_OF_STUDENTS_ENROLLED, C.MAX_STUDENTS_ALLOWED FROM COURSE C, TAUGHT_BY T WHERE"
-                + " c.course_id not in (select tb.course_id from taught_by tb where "
-                + "tb.PROF_ID = '"+ userObj.user_id +"' )";
-        System.out.println(query);
+                + " c.course_id not in (select tb.course_id from taught_by tb )";
+        //System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -344,8 +343,8 @@ public class ProfHome extends javax.swing.JFrame {
                 temp_course.course_id = rs.getString("COURSE_ID");
                 temp_course.course_name = rs.getString("COURSE_NAME");
                 temp_course.course_level = rs.getString("COURSE_LEVEL");
-                temp_course.course_start_dt = rs.getDate("COURSE_START_DT");
-                temp_course.course_end_dt = rs.getDate("COURSE_END_DT");
+                temp_course.course_start_dt = rs.getTimestamp("COURSE_START_DT");
+                temp_course.course_end_dt = rs.getTimestamp("COURSE_END_DT");
                 temp_course.max_students_allowed = rs.getInt("MAX_STUDENTS_ALLOWED");
                 temp_course.no_of_students_enrolled = rs.getInt("NO_OF_STUDENTS_ENROLLED");
 
@@ -364,7 +363,7 @@ public class ProfHome extends javax.swing.JFrame {
         //     courseActionObj.courseObj = courseObj;
         //courseActionObj.userObj = userObj;
        // course_array[index] = temp_course;
-        System.out.println(course_array[index]);
+        //System.out.println(course_array[index]);
         Prof_CourseActions obj = new Prof_CourseActions(userObj,course_array[index]);
         obj.setVisible(true);
 
@@ -386,7 +385,7 @@ public class ProfHome extends javax.swing.JFrame {
                 + "C.COURSE_END_DT, C.MAX_STUDENTS_ALLOWED, C.NO_OF_STUDENTS_ENROLLED "
                 + " FROM TAUGHT_BY T,COURSE C WHERE T.PROF_ID='"
                 + userObj.user_id + "' AND C.COURSE_ID = T.COURSE_ID)"; }
-       System.out.println(query);
+       //System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -394,8 +393,8 @@ public class ProfHome extends javax.swing.JFrame {
                 temp_course.course_id = rs.getString("COURSE_ID");
                      temp_course.course_name = rs.getString("COURSE_NAME");
                         temp_course.course_level = rs.getString("COURSE_LEVEL");
-                        temp_course.course_start_dt = rs.getDate("COURSE_START_DT");
-                        temp_course.course_end_dt = rs.getDate("COURSE_END_DT");
+                        temp_course.course_start_dt = rs.getTimestamp("COURSE_START_DT");
+                        temp_course.course_end_dt = rs.getTimestamp("COURSE_END_DT");
                         temp_course.max_students_allowed = rs.getInt("MAX_STUDENTS_ALLOWED");
                         temp_course.no_of_students_enrolled = rs.getInt("NO_OF_STUDENTS_ENROLLED");
                         

@@ -14,6 +14,7 @@ import dbproject.dbconnection.dbconnection_dbObject;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -315,6 +316,7 @@ public class Student_Home extends javax.swing.JFrame {
         String subjectName = jComboBox1.getSelectedItem().toString();
         
         Student_CourseActions obj = new Student_CourseActions(courseActionObj);
+        sendNotification(courseActionObj);
         obj.setVisible(true);
         
         this.dispose();
@@ -334,7 +336,7 @@ public class Student_Home extends javax.swing.JFrame {
     This button will check for token and will sign up the student for perticular course if all conditions are met.
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        //Step1: 
+        boolean isATA = false;
         //Check if the token is valid
         String token = jTextField1.getText();
         String query = "SELECT * from token t where t.token_id = '"+token+"'";
@@ -355,7 +357,7 @@ public class Student_Home extends javax.swing.JFrame {
                 //Add student in the course
                 //get the course_id and date of expirancy of the token of the course related to the token
                 String courseID = rs.getString("course_id");
-                Date tokenDate = rs.getDate("token_exp_dt");
+                Date tokenDate = rs.getTimestamp("token_exp_dt");
                 
                 //check if the expiration date of the token hasn't been crossed
                 query = "SELECT SYSDATE FROM DUAL";
@@ -364,7 +366,7 @@ public class Student_Home extends javax.swing.JFrame {
                 try {
                     rs = stmt.executeQuery(query);
                     rs.next();
-                    Date currentDate = rs.getDate("sysdate");
+                    Date currentDate = rs.getTimestamp("sysdate");
                     if (currentDate.before(tokenDate) ){//token still valid
                         //check if the student is not already enrolled in this class
                         query = "select * from enrollment e where e.student_id = '"+userObj.user_id+"' and e.course_id ='"+courseID+"'";
@@ -374,7 +376,118 @@ public class Student_Home extends javax.swing.JFrame {
                             rs = stmt.executeQuery(query);
 
                             if (!rs.next()) {//the query returns nothing - the student is not already enrolled in this class 
-                                DataType_courseAction dataCourse = new DataType_courseAction(courseID);//creation of a dataType related to the course
+                                
+                                //check if the student is not a TA in a class that have the same subject
+                                //get the topicID of the course courseID
+                                query = "Select * from course_topic c where course_id = '"+courseID+"'";
+                                System.out.println("query get the topicID of the course courseID "+courseID+" : "+query);
+
+                                try {
+                                    rs = stmt.executeQuery(query);
+                                    while(rs.next()){//treat each topicID
+                                        String topicID = rs.getString("topic_id");
+                                        
+                                        //check if the user is not a TA in the courses of the list of courseID that have this topicId 
+                                        query = "select c.course_id from course_topic c where c.topic_id = '"+topicID+"'";
+                                        System.out.println("query get the list of courseID that have topicID "+topicID+" : "+query);
+                                        
+                                        try {
+                                            ResultSet rs2 = stmt.executeQuery(query);
+
+                                            while(rs2.next()){//treat each courseID that as the same topicId that the token's course
+                                                //check if the user is not a TA in the course
+                                                String potentialCourseID = rs2.getString("course_id");
+                                        
+                                                query = "select * from course c where c.course_id = '"+potentialCourseID+"'";
+                                                System.out.println("query get data of the course "+potentialCourseID+" : "+query);
+
+                                                try {
+                                                    ResultSet rs3 = stmt.executeQuery(query);
+
+                                                    while(rs3.next()){//treat each courseID that as the same topicId that the token's course
+                                                        //check if the user is not a TA in the course
+                                                        query = "select * from teaching_assistant t where t.student_id = '"+userObj.user_id+"' and t.course_id = '"+potentialCourseID+"' ";
+                                                        System.out.println("query check if user as a TA in "+potentialCourseID+" : "+query);
+
+                                                        try {
+                                                            ResultSet rs4 = stmt.executeQuery(query);
+                            
+                                                            while(rs4.next()){//The student is a TA in the course - check each classes where the user is a TA
+                                                                //check the expiracyDate
+                                                                Date validTillDate = rs4.getDate("valid_till_dt");
+                                                                if (currentDate.before(validTillDate)) {//the TA is currently a TA
+                                                                    isATA = true;
+                                                                    //Send a notification to the teachers and the user
+                                                                    String messageUser = "WARNING : You tried to join the class "+courseID+" despite you were a TA in the class "+potentialCourseID+". The teachers of these courses receive a notification about that.";
+                                                                    String messageProfProtentialCourseID = "WARNING : The student "+userObj.user_id+" is currently a TA in the class "+potentialCourseID+" and tried to be added to the class "+courseID;
+                                                                    String messageProfCourseID = messageProfProtentialCourseID;
+                                                                    String profProtentialCourseID = null;
+                                                                    String profCourseID = null;
+                                                                    
+                                                                    //get the userId of the teachers
+                                                                    query = "select * from taught_by t where t.course_id = '"+courseID+"' or t.course_id = '"+potentialCourseID+"' ";
+                                                                    System.out.println("query get list of profID of the courses "+potentialCourseID+" and "+courseID+": "+query);
+
+                                                                    try {
+                                                                        ResultSet rs5 = stmt.executeQuery(query);
+                                                                        while(rs5.next()){//treat each profID
+                                                                            String profID = rs5.getString("prof_id");
+                                                                            String courseOfProf = rs5.getString("course_id");
+                                                                            if (courseOfProf.equals(courseID)){
+                                                                                profCourseID = profID;
+                                                                            }
+                                                                            else{
+                                                                                profProtentialCourseID = profID;
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                    catch (Exception oops) {
+                                                                        System.out.println("WARNING - Student_Home - jButton5ActionPerformed(java.awt.event.ActionEvent evt) -get list of profID of the courses "+potentialCourseID+" and "+courseID+":  "+ oops); 
+                                                                    }
+                                                                    
+                                                                    
+                                                                    //send the notification to the prof of potentialcourseID
+                                                                    new DataType_notification(profProtentialCourseID, potentialCourseID, messageProfProtentialCourseID);
+                                                                    
+                                                                    //send the notification to the prof of courseID
+                                                                    new DataType_notification(profCourseID, courseID, messageProfCourseID);
+                                                                    
+                                                                    //Warning message
+                                                                    jLabel3.setVisible(true);
+                                                                    jLabel3.setText("Already a TA in a similar class.");
+                                                                    jLabel3.setForeground(Color.red);
+                                                                    
+                                                                }
+                                                            }
+                                                        }
+                                                        catch (Exception oops) {
+                                                            System.out.println("WARNING - Student_Home - jButton5ActionPerformed(java.awt.event.ActionEvent evt) -check if user as a TA in "+potentialCourseID+" :  "+ oops); 
+                                                        }
+
+
+                                                    }
+                                                }
+                                                catch (Exception oops) {
+                                                    System.out.println("WARNING - Student_Home - jButton5ActionPerformed(java.awt.event.ActionEvent evt) -get the list of courseID that have topicID "+topicID+" : "+ oops); 
+                                                }
+
+                                            }
+                                        }
+                                        catch (Exception oops) {
+                                            System.out.println("WARNING - Student_Home - jButton5ActionPerformed(java.awt.event.ActionEvent evt) -get the list of courseID that have topicID "+topicID+" : "+ oops); 
+                                        }
+                                        
+                                    }
+                                }
+                                catch (Exception oops) {
+                                    System.out.println("WARNING - Student_Home - jButton5ActionPerformed(java.awt.event.ActionEvent evt) -get the topicID of the course courseID "+courseID+" : "+ oops); 
+                                }
+                                
+                                
+                                
+                                if (isATA == false){//the student is not a TA
+                                    DataType_courseAction dataCourse = new DataType_courseAction(courseID);//creation of a dataType related to the course
 
                                 //Check if there is enough place inside the class to add this student
                                 int noOfStudentEnrolled = dataCourse.getNoOfSudentEnrolled();
@@ -419,12 +532,13 @@ public class Student_Home extends javax.swing.JFrame {
                                         System.out.println("WARNING - Student_Home - jButton5ActionPerformed - update value of no_of_student_enrolled of course_id"+courseID+" : "+ oops); 
                                     }
 
-                                } else {//not enought room to add an another student
-                                    System.out.println("No enought room for an other student. Adding is impossible.");
-                                    //Warning message
-                                    jLabel3.setVisible(true);
-                                    jLabel3.setText("enrollment impossible. No free seat.");
-                                    jLabel3.setForeground(Color.red);
+                                    } else {//not enought room to add an another student
+                                        System.out.println("No enought room for an other student. Adding is impossible.");
+                                        //Warning message
+                                        jLabel3.setVisible(true);
+                                        jLabel3.setText("enrollment impossible. No free seat.");
+                                        jLabel3.setForeground(Color.red);
+                                    }
                                 }
                             }
                             else{//student is already enrolled in this class
@@ -503,6 +617,74 @@ public class Student_Home extends javax.swing.JFrame {
                 
             }
         });
+    }
+    
+    //Function that check if notifications have to be send
+    public void sendNotification(DataType_courseAction courseActionObj){
+        //get the current date from the database
+        Date currentDate;
+        Date futurDate;
+        int hoursBeforeNotification = 24;//students will receive notifications 24h before the end_date of an assignment
+                
+        String query = "SELECT SYSDATE FROM DUAL";
+        System.out.println("query to get date from server : "+query);
+        
+        try {
+            rs = stmt.executeQuery(query);
+            rs.next();
+            currentDate = rs.getTimestamp("sysdate");
+            //Get the date 24h later
+            Calendar cal = Calendar.getInstance(); // creates calendar
+            cal.setTime(new Date()); // sets calendar time/date
+            cal.add(Calendar.HOUR_OF_DAY, hoursBeforeNotification); // adds hourseforeNotifications
+            futurDate = cal.getTime();
+            
+            
+            //get all the data related to the homeworks in the course
+            query = "SELECT * from assignment a where a.course_id = '"+courseActionObj.getCourseID()+"'";
+            System.out.println("query get all the homeworks in the course "+courseActionObj.getCourseID()+" : "+query);
+
+            try {
+                rs = stmt.executeQuery(query);
+                while(rs.next()){//treat each homework
+                    Date assignmentEndDate = rs.getDate("end_dt");
+                    String assignmentID = rs.getString("assignment_id");
+
+                    if (futurDate.after(assignmentEndDate) ){//the due date of this assignment is in less than 24h
+                        //Check if the user has make at least one attempt in this assignment
+                        query = "SELECT COUNT(*) from attempt a where a.assignment_id = '"+assignmentID+"' and a.student_id='"+courseActionObj.userObj.getUser_id()+"'";
+                        System.out.println("query get the number of attempts of the assignments "+assignmentID+" by the user "+courseActionObj.userObj.getUser_id()+" : "+query);
+
+                        try {
+                            rs = stmt.executeQuery(query);
+                            rs.next();
+                            int numberOfAttempt = rs.getInt("COUNT(*)");
+                            System.out.println("number Of attempt :"+numberOfAttempt);
+                            
+                            if (numberOfAttempt == 0) {//the user did make any attempt
+                                //creation of a notification
+                                String message = "WARNING : You have an assignment in "+courseActionObj.getCourseID()+" in less than 24h.";
+                                new DataType_notification(courseActionObj.userObj.user_id, courseActionObj.getCourseID(), message);
+                            }
+
+                        }
+                        catch (Exception oops) {
+                            System.out.println("WARNING - Student_Notification - sendNotification() -get the number of attempts of the assignments "+assignmentID+" by the user "+courseActionObj.userObj.getUser_id()+" : "+ oops); 
+                        }
+                   }    
+
+                }
+
+            }
+            catch (Exception oops) {
+                System.out.println("WARNING - Student_Notification - sendNotification() -get all data related to the homeworks in the class "+courseActionObj.getCourseID()+" : "+ oops); 
+            }
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - Student_Home - sendNotification() - get current date : "+ oops); 
+        }
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

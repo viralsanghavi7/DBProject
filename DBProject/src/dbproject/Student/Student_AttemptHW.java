@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,8 +32,10 @@ public class Student_AttemptHW extends javax.swing.JFrame {
 
     DataType_courseAction courseActionObj;
     private ArrayList<DataType_assignment> list;
+    private ArrayList<DataType_assignment> backup;
     private Statement stmt = null;
     private ResultSet rs = null; 
+    
     /**
      * Creates new form MainScreen
      */
@@ -50,7 +53,8 @@ public class Student_AttemptHW extends javax.swing.JFrame {
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         Statement stmt = db.stmt;
         String s = "select * from assignment where course_id='"+inputObj.getCourseID()+"'";
-        list = new ArrayList<DataType_assignment>();       
+        list = new ArrayList<DataType_assignment>();    
+        backup = new ArrayList<DataType_assignment>();
         try{
         rs = stmt.executeQuery(s);
         while(rs.next()){
@@ -58,14 +62,16 @@ public class Student_AttemptHW extends javax.swing.JFrame {
             String assignment_name = rs.getString(2);
             int assignment_difficulty = rs.getInt(3);
             int number_of_retries = rs.getInt(4);
+            int random = rs.getInt(5);
             int penalty_points = rs.getInt(6);
             int correct_points =rs.getInt(7);
-            Date start_dt = rs.getDate(8);
-            Date end_dt = rs.getDate(9);
+            Date start_dt = rs.getTimestamp(8);
+            Date end_dt = rs.getTimestamp(9);
             int score_selection_method = rs.getInt(10);
             String course_id = rs.getString(11);
             String professor_id = rs.getString(12);
-            DataType_assignment assignment = new DataType_assignment(assignment_id,assignment_name,assignment_difficulty,number_of_retries,penalty_points,correct_points,start_dt,end_dt,score_selection_method,course_id,professor_id);
+            int num = rs.getInt(13);
+            DataType_assignment assignment = new DataType_assignment(num,random,assignment_id,assignment_name,assignment_difficulty,number_of_retries,penalty_points,correct_points,start_dt,end_dt,score_selection_method,course_id,professor_id);
             list.add(assignment);
         }
         }catch(Exception o){}
@@ -73,8 +79,28 @@ public class Student_AttemptHW extends javax.swing.JFrame {
         Vector<String> data = new Vector<String>();
         for(int i=0;i<list.size();i++){
             DataType_assignment assignment = j.next();
-            if(assignment.getEnd_dt().after(new Date()))               
-                data.add(assignment.getAssignment_name());
+            if(assignment.getEnd_dt().after(new Date())){
+                backup.add(assignment);
+                String student_id = inputObj.getUserObj().getUser_id();
+                String string = "select count(*) from attempt where student_id='"+student_id+"' and assignment_id='"+assignment.getAssignment_id()+"'";
+                String num=null;
+                try{
+                    rs = stmt.executeQuery(string);
+                    rs.next();
+                    int n =assignment.getNumber_of_retries();
+                    
+                    int x;
+                    if(n==0)
+                        num = "unlimited";
+                    else {                     
+                        x= assignment.getNumber_of_retries()-rs.getInt(1);
+                        assignment.setNumber(x);
+                        num = ""+x;
+                    }                          
+                }catch(Exception e){e.printStackTrace();}
+                
+                data.add(assignment.getAssignment_name()+"           number of retries left:"+num);
+            }
         }
         jList1.removeAll();
         jList1.setListData(data);
@@ -249,7 +275,7 @@ public class Student_AttemptHW extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Student_CourseActions obj = new Student_CourseActions();
+        Student_CourseActions obj = new Student_CourseActions(courseActionObj);
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -260,17 +286,30 @@ public class Student_AttemptHW extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         ButtonModel selectedButton =  buttonGroup1.getSelection();
         
-        String assignment_name = jList1.getSelectedValue().toString();
-        DataType_assignment assignment = null;
-        Iterator<DataType_assignment> i = list.iterator();
-        for(int j=0;j<list.size();j++){
-            assignment = i.next();
-            if(assignment.getAssignment_name().equals(assignment_name))
-                break;
-        }
-        Student_StartAttempt obj = new Student_StartAttempt(assignment);     
-        obj.setVisible(true);
-        this.dispose();
+        if(list.isEmpty())
+            JOptionPane.showMessageDialog(this, "no attempts exist", "error", JOptionPane.ERROR_MESSAGE);
+        else{
+            int index = 0;
+            try{          
+                index = jList1.getSelectedIndex();
+            }catch(Exception o){
+                o.printStackTrace();
+                JOptionPane.showMessageDialog(this, "please select an homework", "error", JOptionPane.ERROR_MESSAGE);
+            }  
+                System.out.println(index);
+                
+                DataType_assignment assignment = backup.get(index);
+                if(assignment.getNumber_of_retries()==0||assignment.getNumber()>0){
+                
+                    System.out.println(assignment.getAssignment_name());
+                    assignment.setStudent_id(courseActionObj.getUserObj().getUser_id());
+                    Student_StartAttempt obj = new Student_StartAttempt(assignment, courseActionObj);     
+                    obj.setVisible(true);
+                    this.dispose();
+                }
+                else 
+                      JOptionPane.showMessageDialog(this, "no more retries left", "error", JOptionPane.ERROR_MESSAGE);
+        }       
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /*

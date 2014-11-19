@@ -354,7 +354,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
          boolean ischecked = false;
          
          String assignment_id = assignmentId.get(jComboBox1.getSelectedIndex());
-         System.out.println(assignment_id);
+         //System.out.println(assignment_id);
         //Step2 : Store all the questions in choosen_question table.
         for(int i = 0; i < allQuestions.size(); i ++)
         {
@@ -521,7 +521,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     private void load_assignments() {
         
         query = "SELECT assignment_name,assignment_id,assignment_difficulty_level from assignment "
-                + "where course_id ='" + courseObj.course_id +"' and start_dt > SYSDATE"; 
+                + "where course_id ='" + courseObj.course_id +"' and start_dt > SYSDATE - 2"; 
         query1= "SELECT topic_name,t.topic_id from topic t, course_topic ct where ct.course_id ='"+ courseObj.course_id 
                 +"' and ct.topic_id = t.topic_id"; 
                 
@@ -555,7 +555,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
     public void load_question(String type){
         
         allQuestions.clear();
-        System.out.println( jComboBox2.getSelectedIndex());
+        //System.out.println( jComboBox2.getSelectedIndex());
         
         if(type.equals("add")){
         query = "SELECT question_id, ques_text, ques_difficulty_level, ques_hint, topic_id, ques_isdynamic,"
@@ -573,7 +573,7 @@ public class Prof_Add_Remove_Question extends javax.swing.JFrame {
         
         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
         model.getDataVector().removeAllElements();
-        System.out.println(query);
+        //System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
             

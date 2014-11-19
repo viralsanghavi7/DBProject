@@ -44,9 +44,14 @@ public class Prof_Notification extends javax.swing.JFrame {
         
         courseActionObj = inputObj;
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(70);
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);        
+        jLabel1.setText("Notification(s) for " + courseActionObj.getCourseName() + " " + courseActionObj.getCourseID());
         GetNotificationsFromDB();
-        jLabel1.setText("Notification(s) for " + courseActionObj.getCourseName());
+        if (notifiationList.size() == 0)
+        {
+            jButton2.setEnabled(false);
+            jButton3.setEnabled(false);
+        }
     }
     
     /*
@@ -309,7 +314,7 @@ public class Prof_Notification extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /*
-    Click on 'Clear Notification' button
+    Click on 'Clear selected Notification' button
     */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (notifiationList.size() == 0)
@@ -371,11 +376,7 @@ public class Prof_Notification extends javax.swing.JFrame {
 
     //Clear all notifications seen
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (notifiationList.size() == 0)
-        {
-            JOptionPane.showMessageDialog(this, "No notifications to clear.");
-            return;
-        }
+            
         
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
         String query;

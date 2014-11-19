@@ -10,7 +10,9 @@ import dbproject.WelcomeScreen;
 import dbproject.dbconnection.dbconnection_dbObject;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.DefaultListModel;
 
 /**
@@ -49,15 +51,14 @@ public class Prof_Report extends javax.swing.JFrame {
     //Method to populate all the comboboxes in all the tabs available on the UI.
     private void PopulateComboBoxData(){
         
-        
+        jLabel1.setText(courseActionObj.getCourseID() + " " + courseActionObj.getCourseName());
         //Step1: Populate jComboBox1 in Homework related stats tab and jComboBox4 in max score students tab
         //Step2: Populate jComboBox2 in Student related stats tab
         String sCouseId = courseActionObj.getCourseID();
         try {
             //To load the list of homeworks in select homework dropdown
             query = "SELECT assignment_id, assignment_name from assignment where course_id ='" 
-                    + sCouseId +"'"
-                    + " and professor_id = '" + courseActionObj.userObj.user_id +"'";
+                    + sCouseId +"'";
             
             rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -216,23 +217,23 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel3.setText("Maximum score:");
 
-        jLabel4.setText("select homework");
+        jLabel4.setText("_____________");
 
         jLabel5.setText("Minimum score:");
 
-        jLabel6.setText("select homework");
+        jLabel6.setText("_____________");
 
         jLabel7.setText("Average number of attempts:");
 
-        jLabel8.setText("select homework");
+        jLabel8.setText("_____________");
 
         jLabel9.setText("List of students who did not submit this HW:");
 
         jScrollPane1.setViewportView(jList1);
 
-        jLabel10.setText("Student who scored first max on first attempt:");
+        jLabel10.setText("Student who scored maximum score first of the homework:");
 
-        jLabel11.setText("select homework");
+        jLabel11.setText("_____________");
 
         javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
@@ -334,7 +335,7 @@ public class Prof_Report extends javax.swing.JFrame {
 
         jLabel15.setText("Average score across all homeworks:");
 
-        jLabel16.setText("avg_value");
+        jLabel16.setText("______________");
 
         jLabel17.setText("HW score according to criteria:");
 
@@ -594,7 +595,7 @@ public class Prof_Report extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //Step1: Get the selected student from the dropdown jComboBox2
         String selectedStudentID = Students.get(jComboBox2.getSelectedIndex());
-        
+        String sCourseId = courseActionObj.getCourseID();
         //Step2: Get the value of average score accross all homeworks for selected student
         try
         {            
@@ -621,13 +622,14 @@ public class Prof_Report extends javax.swing.JFrame {
                 "		and a3.student_id = '" + selectedStudentID + "'" +
                 "		group by a3.student_id, a3.assignment_id) " +
                         //for score selection = average of all attempts
-                "	when a.score_selection_method = 3 THEN " +
+                "	WHEN a.score_selection_method = 3 THEN " +
                 "		(select avg(a4.atmpt_score) from attempt a4 " +
                 "		where a.assignment_id = a4.assignment_id " +
                 "		and a4.student_id = '" + selectedStudentID + "'" +
                 "		group by a4.student_id, a4.assignment_id) " +
                 " End as homework_score " +
-                " from assignment a) temp";
+                " from assignment a where a.course_id = '" + sCourseId + "') temp";
+        
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 jLabel16.setText(rs.getString("avg_hw_score"));                
@@ -638,6 +640,7 @@ public class Prof_Report extends javax.swing.JFrame {
                 " where exists " +
                 " (select at.student_id from attempt at " +
                 " where at.assignment_id = a.assignment_id " +
+                " and a.course_id = '" + sCourseId + "'" +
                 " and at.student_id = '" + selectedStudentID + "')";
         
         rs = stmt.executeQuery(query);
@@ -696,18 +699,18 @@ public class Prof_Report extends javax.swing.JFrame {
                 "		group by a4.student_id, a4.assignment_id) " +
                 " End as homework_score " +
                 " from assignment a where a.assignment_id = '" + selectedHWForStudent + "'";
-        rs = stmt.executeQuery(query);
+        rs = db.conn.createStatement().executeQuery(query);
         while (rs.next()) {
             jLabel21.setText(rs.getString("score_selection_method"));
-            jLabel21.setText(rs.getString("homework_score"));
+            jLabel14.setText(rs.getString("homework_score"));
         }
         
         // To find total number of attempts by particular student for particular homework.
-        query = " select at.student_id, at.assignment_id , count(at.atmpt_dt) at totalAttempts from attempt at " +
+        query = " select at.student_id, at.assignment_id , count(at.atmpt_dt) as totalAttempts from attempt at " +
                 " where at.student_id = '" + selectedStudentID + "'" +
                 " and at.assignment_id = '" + selectedHWForStudent + "'" +
                 " group by at.student_id, at.assignment_id ";        
-        rs = stmt.executeQuery(query);
+        rs = db.conn.createStatement().executeQuery(query);
         while (rs.next()) {
             jLabel19.setText(rs.getString("totalAttempts"));
         }
@@ -731,6 +734,7 @@ public class Prof_Report extends javax.swing.JFrame {
         String selectedHW = Homeworks.get(jComboBox4.getSelectedIndex());
         int maxScore = 0;
         String studentName, attempt_dt;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh12:mm:ss am");
         try
         {
             query = "select max(atmpt_score) as maximum from attempt "
@@ -757,9 +761,9 @@ public class Prof_Report extends javax.swing.JFrame {
             rs = stmt.executeQuery(query);
             DefaultListModel studentList = new DefaultListModel();
             while (rs.next()) {
-                studentName = rs.getString("user_name");
-                attempt_dt = rs.getDate("atmpt_dt").toString();
-                studentList.addElement(studentName + " Attempt date:" + attempt_dt);
+                studentName = rs.getString("user_name");           
+                attempt_dt = rs.getTimestamp("atmpt_dt").toString();                
+                studentList.addElement(studentName + " --> Attempt date:" + attempt_dt);
             }
             jList2.setModel(studentList);   
         }

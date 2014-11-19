@@ -359,7 +359,7 @@ public class Prof_AddHW extends javax.swing.JFrame {
                 //Send the data in the DB
         
                 query1 = "select sys_guid() from dual";
-                System.out.println(query);
+                //System.out.println(query);
                 try {
                     rs = stmt.executeQuery(query1);
                  rs.next();
@@ -375,7 +375,7 @@ public class Prof_AddHW extends javax.swing.JFrame {
                          + number_of_questions +"')";
                          
 
-                        System.out.println(query);
+                        //System.out.println(query);
                         rs = stmt.executeQuery(query);
                     
                 }

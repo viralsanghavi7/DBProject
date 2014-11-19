@@ -27,6 +27,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     Statement stmt = null;
     ResultSet rs = null;
     boolean bWarningEnable = false;
+    boolean bInitialLoading = true;
     
     /**
      * Creates new form MainScreen
@@ -49,7 +50,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         jLabel1.setText(courseObj.course_name + " " + courseObj.course_id);
         jLabel11.setVisible(false);
         GetAllHomeworkList();
-        
+        bInitialLoading = false;
         if (Homeworks.size() == 0)
         {
             jButton4.setEnabled(false);
@@ -62,8 +63,9 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
     
     private void GetAllHomeworkList()
     {
-        query = "select a.* from assignment a where a.course_id = '" + courseObj.course_id + "'";
+        
         try {
+                query = "select assignment_id, assignment_name from assignment where course_id = '" + courseObj.course_id + "'";
                 rs = stmt.executeQuery(query);
                 while (rs.next()) {
                 Homeworks.add(rs.getString("assignment_id"));
@@ -86,7 +88,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         DataType_assignment assgDetails = new DataType_assignment();
         
         try {
-                query = "select a.* from assignment a where a.assignment_id = '" + assignmentID + "'";
+                query = "select * from assignment where assignment_id = '" + assignmentID + "'";
                 rs = stmt.executeQuery(query);
                 while (rs.next()) {
                 assgDetails.assignment_id = assignmentID;
@@ -94,8 +96,8 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
                 assgDetails.assignment_name = rs.getString("assignment_name");
                 assgDetails.correct_points = rs.getInt("correct_points");
                 assgDetails.course_id = rs.getString("course_id");
-                assgDetails.end_dt = rs.getDate("end_dt");
-                assgDetails.start_dt = rs.getDate("start_dt");
+                assgDetails.end_dt = rs.getTimestamp("end_dt");
+                assgDetails.start_dt = rs.getTimestamp("start_dt");
                 assgDetails.number_of_retries = rs.getInt("number_of_retries");
                 assgDetails.penalty_points = rs.getInt("penalty_points");
                 assgDetails.professor_id = rs.getString("professor_id");
@@ -118,7 +120,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
         try
         {
             java.util.Date currentDate = new java.util.Date();
-            if (currentDate.compareTo(assignment.start_dt) > 0)
+            if (currentDate.compareTo(assignment.start_dt) > 2)
             {
                 bWarningEnable = true;
                 jLabel11.setVisible(true);
@@ -134,46 +136,76 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
             jXDatePicker2.setDate(assignment.start_dt);
             if (bWarningEnable)
                 jXDatePicker2.setEnabled(false);
+            else
+                jXDatePicker2.setEnabled(true);
             
             //end date
             jXDatePicker3.setDate(assignment.end_dt);
             if (bWarningEnable)
                 jXDatePicker3.setEnabled(false);
+            else
+                jXDatePicker3.setEnabled(true);
             
             //number of attempts
             jComboBox4.setSelectedIndex(assignment.number_of_retries);
             if (bWarningEnable)
                  jComboBox4.setEnabled(false);
+            else
+                jComboBox4.setEnabled(true);
             
             //randomization seed
             jTextField1.setText(Integer.toString(assignment.random_seed));
             if (bWarningEnable)
                  jTextField1.setEnabled(false);
+            else
+                jTextField1.setEnabled(true);
             
             //Difficulty range
             jComboBox1.setSelectedIndex(assignment.assignment_difficulty - 1);
             if (bWarningEnable)
                  jComboBox1.setEnabled(false);
+            else
+                jComboBox1.setEnabled(true);
             
             //score selection theme
             jComboBox2.setSelectedIndex(assignment.score_selection_method - 1);
             if (bWarningEnable)
                  jComboBox2.setEnabled(false);
+            else
+                jComboBox2.setEnabled(true);
             
             //number of questions
             jTextField2.setText(Integer.toString(assignment.number_of_questions));
             if (bWarningEnable)
                  jTextField2.setEnabled(false);
+            else
+                jTextField2.setEnabled(true);
             
             //correct answer points
             jTextField3.setText(Integer.toString(assignment.correct_points));
             if (bWarningEnable)
                  jTextField3.setEnabled(false);
+            else
+                jTextField3.setEnabled(true);
             
             //Incorrect answer points
             jTextField4.setText(Integer.toString(assignment.penalty_points));
             if (bWarningEnable)
                  jTextField4.setEnabled(false);
+            else
+                jTextField4.setEnabled(true);
+            
+            
+            if (bWarningEnable)
+            {
+                jButton4.setEnabled(false);
+                jButton5.setEnabled(false);
+            }
+            else
+            {
+                jButton4.setEnabled(true);
+                jButton5.setEnabled(true);
+            }
             
         }
         catch(Exception oops) {
@@ -366,22 +398,21 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
                                         .addComponent(jXDatePicker3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
+                        .addContainerGap()
                         .addComponent(jLabel11)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel10)
                         .addGap(30, 30, 30)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -435,7 +466,7 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -576,10 +607,13 @@ public class Prof_Edit_HW extends javax.swing.JFrame {
 
     //When different homework is selected from dropdown
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
-        String selectedHW = Homeworks.get(jComboBox3.getSelectedIndex());
+        if(!bInitialLoading)
+        {
+            String selectedHW = Homeworks.get(jComboBox3.getSelectedIndex());
         
-        DataType_assignment assgDetails =  getAssignmentDetails(selectedHW);
-        PopulateAllHWDetails(assgDetails);        
+            DataType_assignment assgDetails =  getAssignmentDetails(selectedHW);
+            PopulateAllHWDetails(assgDetails);
+        }        
     }//GEN-LAST:event_jComboBox3ActionPerformed
 
     /**

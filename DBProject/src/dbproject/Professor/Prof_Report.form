@@ -285,7 +285,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel4">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="select homework"/>
+                    <Property name="text" type="java.lang.String" value="_____________"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel5">
@@ -295,7 +295,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel6">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="select homework"/>
+                    <Property name="text" type="java.lang.String" value="_____________"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel7">
@@ -305,7 +305,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel8">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="select homework"/>
+                    <Property name="text" type="java.lang.String" value="_____________"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel9">
@@ -331,12 +331,12 @@
                 </Container>
                 <Component class="javax.swing.JLabel" name="jLabel10">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Student who scored first max on first attempt:"/>
+                    <Property name="text" type="java.lang.String" value="Student who scored maximum score first of the homework:"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel11">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="select homework"/>
+                    <Property name="text" type="java.lang.String" value="_____________"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -485,7 +485,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel16">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="avg_value"/>
+                    <Property name="text" type="java.lang.String" value="______________"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel17">

@@ -74,12 +74,12 @@ public class Prof_View_HW extends javax.swing.JFrame {
                          + "end_dt , score_selection_method , course_id ,professor_id,number_of_questions from assignment "
                 + "where course_id ='" + courseObj.course_id +"' and end_dt < SYSDATE"; 
         
-        System.out.println(query_past);
+        //System.out.println(query_past);
         query_current = "SELECT assignment_id ,assignment_name,assignment_difficulty_level,"
                          + " number_of_retries, random_seed , penalty_points,correct_points, start_dt , "
                          + "end_dt , score_selection_method , course_id ,professor_id,number_of_questions from assignment "
                 + "where course_id ='" + courseObj.course_id +"' and end_dt >= SYSDATE"; 
-        System.out.println(query_current);
+        //System.out.println(query_current);
         try {
             rs = stmt.executeQuery(query_past);
             
@@ -94,8 +94,8 @@ public class Prof_View_HW extends javax.swing.JFrame {
             assignment_object.penalty_points = rs.getInt("penalty_points");
             assignment_object.correct_points = rs.getInt("correct_points");
             assignment_object.correct_points = rs.getInt("correct_points");
-            assignment_object.start_dt = rs.getDate("start_dt");
-            assignment_object.end_dt = rs.getDate("end_dt");
+            assignment_object.start_dt = rs.getTimestamp("start_dt");
+            assignment_object.end_dt = rs.getTimestamp("end_dt");
             assignment_object.score_selection_method = rs.getInt("score_selection_method");
             assignment_object.course_id = rs.getString("course_id");
             assignment_object.professor_id = rs.getString("professor_id");
@@ -119,8 +119,8 @@ public class Prof_View_HW extends javax.swing.JFrame {
             assignment_object.random_seed = rs.getInt("random_seed");
             assignment_object.penalty_points = rs.getInt("penalty_points");
             assignment_object.correct_points = rs.getInt("correct_points");
-            assignment_object.start_dt = rs.getDate("start_dt");
-            assignment_object.end_dt = rs.getDate("end_dt");
+            assignment_object.start_dt = rs.getTimestamp("start_dt");
+            assignment_object.end_dt = rs.getTimestamp("end_dt");
             assignment_object.score_selection_method = rs.getInt("score_selection_method");
             assignment_object.course_id = rs.getString("course_id");
             assignment_object.professor_id = rs.getString("professor_id");
@@ -570,7 +570,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
         //System.out.println(selectedAssignments.get(combo_selection).start_dt);
         
          allQuestions.clear();
-        System.out.println( combo_selection);
+        //System.out.println( combo_selection);
         
         String assignmentId = selectedAssignments.get(combo_selection).assignment_id;
         query = "SELECT q.ques_text,q.question_id from question q, chosen_question c where q.question_id = c.question_id"
@@ -582,7 +582,7 @@ public class Prof_View_HW extends javax.swing.JFrame {
         
         DefaultTableModel model = (DefaultTableModel)jTable1.getModel();    
         model.getDataVector().removeAllElements();
-        System.out.println(query);
+        //System.out.println(query);
         try {
             rs = stmt.executeQuery(query);
             

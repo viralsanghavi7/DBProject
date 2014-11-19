@@ -30,6 +30,8 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     DataType_courseAction courseActionObj;
 //    private DataType_attempt attempt;
     private ArrayList<DataType_attempt> list;
+    private ArrayList<DataType_attempt> backup;
+    private ArrayList<DataType_attempt> withinDue;
     /**
      * Creates new form MainScreen
      */
@@ -44,25 +46,35 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     public Student_ViewPastSubmissions(DataType_courseAction inputObj){
         initComponents();
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
-        Statement stmt = db.stmt;
-        String s = "select a.atmpt_dt,a.student_id,a.assignment_id,a.atmpt_score,s.end_dt from attempt a,assignment s where a.assignment_id=s.assignment_id and a.student_id='"+inputObj.getUserObj().getUser_id()+"'";
-        list = new ArrayList<DataType_attempt>();       
+        
+        String s = "select CAST(a.atmpt_dt as TIMESTAMP),a.student_id,a.assignment_id,a.atmpt_score,"
+                + "CAST(s.end_dt as TIMESTAMP),s.assignment_name from attempt a,assignment s "
+                + "where a.assignment_id=s.assignment_id "
+                + "and s.course_id ='" + inputObj.getCourseID() + "' "
+                + "and a.student_id='"+inputObj.getUserObj().getUser_id()+"'";
+        list = new ArrayList<DataType_attempt>(); 
+        backup = new ArrayList<DataType_attempt>(); 
         try{
-        rs = stmt.executeQuery(s);
+        Statement stmt1 = db.conn.createStatement();
+        rs = stmt1.executeQuery(s);
         while(rs.next()){
-            Date atmpt_dt = rs.getDate(1);
+            Date atmpt_dt = rs.getTimestamp(1);
             String student_id = rs.getString(2);
             String assignment_id = rs.getString(3);
             int atmpt_score = rs.getInt(4);
-            Date due_dt = rs.getDate(5);
-            DataType_attempt attempt = new DataType_attempt(atmpt_dt,atmpt_score,student_id,assignment_id,due_dt);
+            Date due_dt = rs.getTimestamp(5);
+            String name = rs.getString(6);
+            DataType_attempt attempt = new DataType_attempt(name,atmpt_dt,atmpt_score,student_id,assignment_id,due_dt);
             list.add(attempt);
+            backup.add(attempt);
         }
         }catch(Exception o){}
         Iterator<DataType_attempt> j = list.iterator();
         String[] data = new String[list.size()];
-        for(int i=0;i<list.size();i++)
-            data[i]= j.next().getAssignment_id();               
+        for(int i=0;i<list.size();i++){
+            DataType_attempt attempt = j.next();
+            data[i]= attempt.getAssignment_name()+"           "+attempt.getAtmpt_dt(); 
+        }
         jList1.removeAll();
         jList1.setListData(data);
         courseActionObj = inputObj;
@@ -262,7 +274,7 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     */
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         WelcomeScreen obj = new WelcomeScreen();
-   //     obj.setVisible(true);
+        obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
@@ -270,7 +282,7 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     Back button
     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Student_CourseActions obj = new Student_CourseActions();
+        Student_CourseActions obj = new Student_CourseActions(courseActionObj);
         obj.setVisible(true);
         
         this.dispose();
@@ -282,13 +294,15 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         jLabel2.setText("Select Attempt:");
         
-        
+        backup.clear();
         Iterator<DataType_attempt> j = list.iterator();
         Vector<String> data = new Vector<String>();
         for(int i=0;i<list.size();i++){
             DataType_attempt attempt = j.next();
-            if(attempt.getDue_dt().before(new Date()))               
-                data.add(attempt.assignment_id);
+            if(attempt.getDue_dt().before(new Date())){
+                backup.add(attempt);
+                data.add(attempt.getAssignment_name()+"           "+attempt.getAtmpt_dt());
+            }
         }
         jList1.removeAll();
         jList1.setListData(data);
@@ -300,12 +314,15 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     */
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         jLabel2.setText("Select Attempt:");
+        backup.clear();
         Iterator<DataType_attempt> j = list.iterator();
         Vector<String> data = new Vector<String>();
         for(int i=0;i<list.size();i++){
             DataType_attempt attempt = j.next();
-            if(attempt.getDue_dt().after(new Date()))               
-                data.add(attempt.assignment_id);
+            if(attempt.getDue_dt().after(new Date())){
+                backup.add(attempt);
+                data.add(attempt.getAssignment_name()+"           "+attempt.getAtmpt_dt());
+            }
         }
         jList1.removeAll();
         jList1.setListData(data);;
@@ -316,35 +333,41 @@ public class Student_ViewPastSubmissions extends javax.swing.JFrame {
     When View Attempt button clicked
     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String assignment_id = jList1.getSelectedValue().toString();
-        DataType_attempt attempt = null;
-        Iterator<DataType_attempt> j = list.iterator();
-        for(int i=0;i<list.size();i++){
-             attempt = j.next();
-             if(attempt.getAssignment_id().equals(assignment_id))
-                 break;
-        }
-        Student_AttemptDetails obj = new Student_AttemptDetails(attempt);
-        obj.setVisible(true);
-        
-        this.dispose();
+        if(list.isEmpty())
+            JOptionPane.showMessageDialog(this, "no attempts exist", "error", JOptionPane.ERROR_MESSAGE);
+        else{
+            try{
+                int index = jList1.getSelectedIndex();
+                System.out.println(index);
+                DataType_attempt attempt = backup.get(index);               
+                Student_AttemptDetails obj = new Student_AttemptDetails(attempt, courseActionObj);
+                obj.setVisible(true);
+                this.dispose();
+            }catch(Exception o){
+                JOptionPane.showMessageDialog(this, "please select an attempt", "error", JOptionPane.ERROR_MESSAGE);
+            }            
+        }                      
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /*
     Home Button
     */
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        Student_Home obj = new Student_Home();
+        Student_Home obj = new Student_Home(courseActionObj.getUserObj());
         obj.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
+        backup.clear();
         Iterator<DataType_attempt> j = list.iterator();
         String[] data = new String[list.size()];
-        for(int i=0;i<list.size();i++)
-            data[i]= j.next().getAssignment_id();               
+        for(int i=0;i<list.size();i++){
+            DataType_attempt attempt = j.next();
+            backup.add(attempt);
+            data[i]= attempt.getAssignment_name()+"           "+attempt.getAtmpt_dt(); 
+        }
         jList1.removeAll();
         jList1.setListData(data);
     }//GEN-LAST:event_jButton7ActionPerformed

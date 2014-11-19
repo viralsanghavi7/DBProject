@@ -25,6 +25,77 @@ public class DataType_notification {
     private ResultSet rs = null;
         
 
+    //creation of a notification for user userID, related to a course courseID and that contains the text notificationText
+    public DataType_notification(String userID, String courseID, String notificationText) {
+        //generate a notificationID that is not already inside the DB
+        int sizeMaxNotificationID = 20;
+        int sizeMaxNotificationText = 100;
+        
+        dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
+        stmt = db.stmt;
+        
+        
+        String query;
+        StringBuffer buffer = new StringBuffer();
+        boolean existanceNotificationIDInDB = false;
+        String notificationID = null;
+                
+        while (existanceNotificationIDInDB == false){
+            for (int i = 0; i < sizeMaxNotificationID; i++) {
+                int value = (int) ((Math.random() * 10) % 10);
+                buffer.append(value);
+            }
+            notificationID = buffer.toString();
+            System.out.println(notificationID);
+
+            //check if this notificationID is not already used in the db
+            query = "SELECT * "
+                    +"FROM notification n "
+                    +"WHERE n.notification_id = '" + notificationID + "'";
+            System.out.println("query to check if notification "+notificationID+" not in DB : "+ query);
+        
+            try {
+                rs = stmt.executeQuery(query);
+
+                if (!rs.next()) {//this notification id is not used in the DB
+                    existanceNotificationIDInDB = true;
+
+                }
+            }
+            catch (Exception oops) {
+                System.out.println("WARNING - DataType_notification - DataType_notificationString userID, String courseID, String notificationText) - check if notificationID "+notificationID+" already exist: "+ oops); 
+            }
+        }
+        
+        //check if the text is not too long
+        if (notificationText.length() > sizeMaxNotificationText){
+            notificationText.substring(0,sizeMaxNotificationText);//only the sizeMaxNotificationText first characters of notificationText remain
+        }
+        
+        //creation of the notification in the database
+        _user_id = userID;
+        _notification_text = notificationText;
+        _visible = "T";
+        _course_id = courseID;
+        query = "INSERT INTO notification(notification_id, notification_text, user_id, visible, course_id) "
+                +"VALUES ('"+notificationID+"', '"+notificationText+"', '"+userID+"', 'T', '"+courseID+"')";
+        System.out.println("query to insert the notification "+notificationID+" : "+ query);
+        
+        try {
+            rs = stmt.executeQuery(query);
+/*
+            if (!rs.next()) {//this notification id is not used in the DB
+                existanceNotificationIDInDB = true;
+
+            }
+*/
+        }
+        catch (Exception oops) {
+            System.out.println("WARNING - DataType_notification - DataType_notificationString userID, String courseID, String notificationText) - query to insert the notification "+notificationID+" :  "+ oops); 
+        } 
+    }
+    
+    
     public DataType_notification(String notification_id) {
         
         dbconnection_dbObject db = dbconnection_dbObject.getDBConnection();
@@ -32,7 +103,7 @@ public class DataType_notification {
         
         
         String query = "SELECT * "
-                        +"FROM notificationTest n "
+                        +"FROM notification n "
                         +"WHERE n.notification_id = '" + notification_id + "'";
         
         System.out.println("query to get the data related to the notification "+notification_id+" : "+ query);
@@ -107,8 +178,7 @@ public class DataType_notification {
 
     public void setCourse_id(String course_id) {
         this._course_id = course_id;
-        //TODO : change notificationTest with notification
-        String query = "UPDATE notificationTest n "
+        String query = "UPDATE notification n "
                     +"SET n.course_id= '"+this._course_id+"' "
                     +"WHERE n.notification_id = '" + _notification_id + "'";
 
@@ -125,8 +195,7 @@ public class DataType_notification {
 
     public void setNotification_id(String notification_id) {
         this._notification_id = notification_id;
-        //TODO : change notificationTest with notification
-        String query = "UPDATE notificationTest n "
+        String query = "UPDATE notification n "
                     +"SET n.notification_id= '"+this._notification_id+"' "
                     +"WHERE n.notification_id = '" + _notification_id + "'";
 
@@ -143,8 +212,7 @@ public class DataType_notification {
 
     public void setNotification_text(String notification_text) {
         this._notification_text = notification_text;
-        //TODO : change notificationTest with notification
-        String query = "UPDATE notificationTest n "
+        String query = "UPDATE notification n "
                     +"SET n.notification_text= '"+this._notification_text+"' "
                     +"WHERE n.notification_id = '" + _notification_id + "'";
 
@@ -161,8 +229,7 @@ public class DataType_notification {
 
     public void setUser_id(String user_id) {
         this._user_id = user_id;
-        //TODO : change notificationTest with notification
-        String query = "UPDATE notificationTest n "
+        String query = "UPDATE notification n "
                     +"SET n.user_id= '"+this._user_id+"' "
                     +"WHERE n.notification_id = '" + _notification_id + "'";
 
@@ -180,8 +247,7 @@ public class DataType_notification {
     public void setVisible(String visible) {//T for make it visble, F for hiden
         if ((visible.equals("T")) || (visible.equals("F"))){
             this._visible = visible;
-            //TODO : change notificationTest with notification
-            String query = "UPDATE notificationTest n "
+            String query = "UPDATE notification n "
                         +"SET n.visible= '"+this._visible+"' "
                         +"WHERE n.notification_id = '" + _notification_id + "'";
 
@@ -199,7 +265,6 @@ public class DataType_notification {
             
     }
 
-    
     
 }
 

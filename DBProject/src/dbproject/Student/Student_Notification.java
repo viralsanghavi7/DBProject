@@ -11,12 +11,16 @@ import dbproject.dataType.DataType_notification;
 import java.io.*;
 import dbproject.dbconnection.dbconnection_dbObject;
 import java.awt.Color;
+import java.awt.Component;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import org.jdesktop.swingx.calendar.DateUtils;
 /**
@@ -61,11 +65,11 @@ public class Student_Notification extends javax.swing.JFrame {
         String userID = courseActionObj.userObj.user_id;
         
         //Creates the notifications
-        sendNotification();
+        //sendNotification();
         //Get the number of notification to display
         String query = "SELECT count(n.notification_id) "
-                        +"FROM notificationTest n "
-                        +"WHERE n.user_id = '" + userID + "' AND n.visible = 'T'";
+                        +"FROM notification n "
+                        +"WHERE n.user_id = '" + userID + "' AND n.visible = 'T' and n.course_id ='"+courseActionObj.getCourseID()+"'";
         
         System.out.println("query to count the number of visible notifications of the user "+userID+" : "+ query);
         try {
@@ -80,8 +84,8 @@ public class Student_Notification extends javax.swing.JFrame {
             
             //get all the notificationID of the visible notifications of the user
             query = "SELECT n.notification_id "
-                        +"FROM notificationTest n "
-                        +"WHERE n.user_id = '" + userID + "' AND n.visible = 'T'";
+                        +"FROM notification n "
+                        +"WHERE n.user_id = '" + userID + "' AND n.visible = 'T' and n.course_id ='"+courseActionObj.getCourseID()+"'";
         
             System.out.println("query to get notification of the user "+userID+" : "+ query);
             try {
@@ -106,6 +110,7 @@ public class Student_Notification extends javax.swing.JFrame {
         catch (Exception oops) {
             System.out.println("WARNING - Student_Notification - Student_Notification(DataType_courseAction inputObj) - count number of notifications of the user : "+ oops); 
         }
+        setTableSize();
 
        //TODO test set functions of notifications 
         
@@ -311,44 +316,32 @@ public class Student_Notification extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     
-    
-    //Function that check if notifications have to be send
-    public void sendNotification(){
-        //get the current date from the database
-        Date currentDate;
-        String query = "SELECT SYSDATE FROM DUAL";
-        System.out.println("query to get date from server : "+query);
-        
-        try {
-            rs = stmt.executeQuery(query);
-            rs.next();
-            currentDate = rs.getDate("sysdate");
-            //Date newDate = DateUtils.addDays(currentDat, WIDTH)
-            
-        }
-        catch (Exception oops) {
-            System.out.println("WARNING - Student_Home - sendNotification() - get current date : "+ oops); 
-        }
-        
-        //get all the data related to the homeworks in the course
-        query = "SELECT * from assignment a where a.course_id = '"+courseActionObj.getCourseID()+"'";
-        System.out.println("query get all the homeworks in the course "+courseActionObj.getCourseID()+" : "+query);
-        
-        
-        /*
-        try {
-            rs = stmt.executeQuery(query);
-            
-            while(rs.next()){//treat each homework
-                
-            }
-            
+    private void setTableSize()
+    {
+          jTable1.setAutoResizeMode( jTable1.AUTO_RESIZE_OFF );
+ 
+        for (int column = 0; column < jTable1.getColumnCount(); column++)
+        {
+            TableColumn tableColumn = jTable1.getColumnModel().getColumn(column);
+            int preferredWidth = tableColumn.getMinWidth();
+            int maxWidth = tableColumn.getMaxWidth();
 
-        }
-        catch (Exception oops) {
-            System.out.println("WARNING - Student_Notification - sendNotification() -get all data related to the homeworks in the class "+courseActionObj.getCourseID()+" : "+ oops); 
-        }
-        */
+            for (int row = 0; row < jTable1.getRowCount(); row++)
+            {
+                TableCellRenderer cellRenderer = jTable1.getCellRenderer(row, column);
+                Component c = jTable1.prepareRenderer(cellRenderer, row, column);
+                int width = c.getPreferredSize().width + jTable1.getIntercellSpacing().width;
+                preferredWidth = Math.max(preferredWidth, width);
+                //  We've exceeded the maximum width, no need to check other rows
+                if (preferredWidth >= maxWidth)
+                {
+                    preferredWidth = maxWidth;
+                    break;
+                }
+            }
+                tableColumn.setPreferredWidth( preferredWidth );
+            }
+                
     }
     /**
      * @param args the command line arguments
